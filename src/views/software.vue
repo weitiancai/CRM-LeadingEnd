@@ -150,7 +150,7 @@
     <el-dialog :title="formTitleShowHardware" :visible.sync="formVisibleShowHardware" :close-on-click-modal="false">
       <el-form :model="formDataHardWare" label-width="80px" ref="formDataHardWare">
         <el-form-item label="硬件类型" prop="type">
-          <el-select v-model="formDataHardWare.type" :readonly="true">
+          <el-select v-model="formDataHardWare.type" :disabled="true">
             <el-option label="服务器" :value=1></el-option>
             <el-option label="密码卡" :value=2></el-option>
           </el-select>
@@ -171,7 +171,7 @@
           <el-input v-model="formDataHardWare.config" :readonly="true"></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="status">
-          <el-select v-model="formDataHardWare.status" :readonly="true">
+          <el-select v-model="formDataHardWare.status" :disabled="true">
             <el-option label="有效" :value=1></el-option>
             <el-option label="无效" :value=0></el-option>
           </el-select>

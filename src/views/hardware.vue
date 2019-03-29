@@ -196,13 +196,20 @@
           }).then(() => {
             deleteIt(id).then((res) => {
               if (res.data.code == 0) {
-                this.$message({
-                  message: '删除成功',
-                  type: 'success'
-                });
+                if(res.data.data==1){
+                  this.$message({
+                    message: '存在挂载软件不可删除',
+                    type: 'error'
+                  });
+                }else{
+                  this.$message({
+                    message: '删除成功',
+                    type: 'success'
+                  });
+                }
               } else {
                 this.$message({
-                  message: res.data.msg,
+                  message: '删除失败',
                   type: 'error'
                 });
               }
