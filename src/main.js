@@ -10,6 +10,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css'
 import 'iview/dist/styles/iview.css';
 
+import '@/icons' // icon
 import '@/styles/index.scss'
 import _CONSTANT from './utils/constant'
 import * as filters from './filters' // global filters
@@ -29,7 +30,7 @@ Object.keys(filters).forEach(key => {
 new Vue({
   el: '#app',
   router,
-  components:{Layout},
-  template:'<Layout/>',
+  components: {Layout},
+  template: '<Layout/>',
   render: h => h(App)
 })

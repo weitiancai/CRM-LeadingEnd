@@ -2,7 +2,7 @@
   <section>
     <!--工具栏-->
     <el-col>
-    <el-button @click="reload" icon="el-icon-arrow-left" circle style="float: left"></el-button>
+      <el-button @click="reload" icon="el-icon-arrow-left" circle style="float: left"></el-button>
       <el-tag style="margin-left: 1vw;margin-top: 1vh">{{name}}</el-tag>
     </el-col>
     <!--主页面-->
@@ -51,11 +51,11 @@
         isChildUpdate2: true,
         isChildUpdate3: false,
         isChildUpdate4: false,
-        name:'',
+        name: '',
       }
     },
     created() {
-      this.name=this.$route.query.name;
+      this.name = this.$route.query.name;
     },
     methods: {
       handleClick(tab) {
@@ -81,11 +81,11 @@
           this.isChildUpdate4 = true;
         }
       },
-      reload(){
+      reload() {
         this.$router.push({path: '/home'});
       }
     },
-    beforeRouteLeave(to,from,next){
+    beforeRouteLeave(to, from, next) {
       this.$destroy();
       next();
     },

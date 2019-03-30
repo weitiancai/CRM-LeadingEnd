@@ -62,145 +62,151 @@
 </template>
 
 <script>
-  import {getAll,add} from '../api/welcome'
+  import {getAll, add} from '../api/welcome'
   import ElMain from "element-ui/packages/main/src/main";
 
-    export default {
-      name: "welcome",
-      components: {ElMain},
-      data(){
-          return{
-            customerList:[],
-            listLoading: false, //是否显示加载动画
-            submitLoading: false,
+  export default {
+    name: "welcome",
+    components: {ElMain},
+    data() {
+      return {
+        customerList: [],
+        listLoading: false, //是否显示加载动画
+        submitLoading: false,
 
-            formVisible: false, //界面是否显示
-            formTitle: '', //界面标题
-            formRules: {
-              name: [
-                {required: true, message: '请输入客户名', trigger: 'blur'}
-              ],
-              function: [
-                {required: true, message: '请输入产品功能', trigger: 'blur'}
-              ],
-              publishDate:[
-                {required:true,message:"请输入上线时间",trigger:'blur'}
-                ],
-              address:[
-                {required:true,message:"请输入地址",trigger:'blur'}
-              ],
-            },
-            formData:{
-              name:'',
-              function:'',
-              publishDate:'',
-              longitudeLatitude:'',
-              website:'',
-              address:'',
-              comment:'',
-              managerId:-1,
-            },
+        formVisible: false, //界面是否显示
+        formTitle: '', //界面标题
+        formRules: {
+          name: [
+            {required: true, message: '请输入客户名', trigger: 'blur'}
+          ],
+          function: [
+            {required: true, message: '请输入产品功能', trigger: 'blur'}
+          ],
+          publishDate: [
+            {required: true, message: "请输入上线时间", trigger: 'blur'}
+          ],
+          address: [
+            {required: true, message: "请输入地址", trigger: 'blur'}
+          ],
+        },
+        formData: {
+          name: '',
+          function: '',
+          publishDate: '',
+          longitudeLatitude: '',
+          website: '',
+          address: '',
+          comment: '',
+          managerId: -1,
+        },
 
-        }
+      }
+    },
+    methods: {
+      showAdd() {
+        this.formVisible = true;
+        this.formTitle = '新增客户';
+        this.formData = {
+          name: '',
+          function: '',
+          publishDate: '',
+          longitudeLatitude: '',
+          website: '',
+          address: '',
+          comment: '',
+          managerId: -1,
+        };
       },
-      methods:{
-          showAdd(){
-            this.formVisible=true;
-            this.formTitle='新增客户';
-            this.formData={
-                name:'',
-                function:'',
-                publishDate:'',
-                longitudeLatitude:'',
-                website:'',
-                address:'',
-                comment:'',
-                managerId:-1,
-            };
-          },
-        goToDetail(index,item){
-          this.$router.push({path: '/customerDetail',query:{id:item.id,name:item.name}});
-        },
-        saveSubmit(){
-          this.$confirm('确认提交吗？', '提示', {}).then(() => {
-            this.submitLoading = true;
-            let customer={
-              name:this.formData.name,
-              function:this.formData.function,
-              publishDate:this.formData.publishDate,
-              longitudeLatitude:this.formData.longitudeLatitude,
-              website:this.formData.website,
-              address:this.formData.address,
-              comment:this.formData.comment,
-              managerId:-1,
-            };
-            add(customer).then(res => {
-              this.submitLoading = false;
-              if (res.data.code == 0) {
-                this.formVisible = false;
-                this.getList(); //重新加载数据
-                this.$message({
-                  message: '添加成功！',
-                  type: 'success'
-                });
-              } else {
-                this.$message({
-                  message: '添加失败！',
-                  type: 'error'
-                });
-              }
-            }).catch((error) => {
-              this.submitLoading = false;
-              if (error) console.log(error);
-            });
-          });
-        },
-        getList(){
-          getAll().then(res => {
-            this.listLoading = false;
-            this.customerList=res.data.data;
+      goToDetail(index, item) {
+        this.$router.push({path: '/customerDetail', query: {id: item.id, name: item.name}});
+      },
+      saveSubmit() {
+        this.$confirm('确认提交吗？', '提示', {}).then(() => {
+          this.submitLoading = true;
+          let customer = {
+            name: this.formData.name,
+            function: this.formData.function,
+            publishDate: this.formData.publishDate,
+            longitudeLatitude: this.formData.longitudeLatitude,
+            website: this.formData.website,
+            address: this.formData.address,
+            comment: this.formData.comment,
+            managerId: -1,
+          };
+          add(customer).then(res => {
+            this.submitLoading = false;
+            if (res.data.code == 0) {
+              this.formVisible = false;
+              this.getList(); //重新加载数据
+              this.$message({
+                message: '添加成功！',
+                type: 'success'
+              });
+            } else {
+              this.$message({
+                message: '添加失败！',
+                type: 'error'
+              });
+            }
           }).catch((error) => {
-            this.listLoading = false;
+            this.submitLoading = false;
             if (error) console.log(error);
           });
-        }
+        });
       },
-      mounted(){
-        this.getList();
+      getList() {
+        getAll().then(res => {
+          this.listLoading = false;
+          this.customerList = res.data.data;
+        }).catch((error) => {
+          this.listLoading = false;
+          if (error) console.log(error);
+        });
       }
+    },
+    mounted() {
+      this.getList();
     }
+  }
 </script>
 
 <style scoped>
-  .toolbar{
+  .toolbar {
     background: #f2f2f2;
-    padding:10px;
+    padding: 10px;
     margin: 10px 0px;
   }
-  .form-item{
-    margin-bottom: 0px!important;
+
+  .form-item {
+    margin-bottom: 0px !important;
   }
-  .cIndex{
+
+  .cIndex {
     width: 3vw;
     height: 9vh;
     background-color: #a7ede2;
     margin-right: 2vh;
     float: left;
   }
-  .cMain{
+
+  .cMain {
     background-color: #a7ede2;
-    width:80vw;
-    height:9vh;
+    width: 80vw;
+    height: 9vh;
     float: left;
   }
-  .rMain{
+
+  .rMain {
     margin-top: 1vh;
   }
-  .pIndex{
+
+  .pIndex {
     text-align: center;
     margin-top: 1.5vh;
   }
-  p{
+
+  p {
     font-size: large;
   }
 </style>

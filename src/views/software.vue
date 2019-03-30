@@ -16,15 +16,19 @@
     <!--主界面-->
     <el-main>
       <el-table :data="softwareList" border style="width: 100%;font-size:15px">
-        <el-table-column header-align="center" align="center" type="index" width="50" ></el-table-column>
+        <el-table-column header-align="center" align="center" type="index" width="50"></el-table-column>
         <el-table-column header-align="center" align="center" label="软件类型" min-width="100">
           <template slot-scope="scope">
             <span>{{scope.row.type|typeChange}}</span>
-          </template></el-table-column>
-        <el-table-column header-align="center" align="center" label="厂商" min-width="100" prop="company"></el-table-column>
+          </template>
+        </el-table-column>
+        <el-table-column header-align="center" align="center" label="厂商" min-width="100"
+                         prop="company"></el-table-column>
         <el-table-column header-align="center" align="center" label="名称" min-width="100" prop="name"></el-table-column>
-        <el-table-column header-align="center" align="center" label="版本号" min-width="100" prop="version"></el-table-column>
-        <el-table-column header-align="center" align="center" label="软件配置" min-width="100" prop="config"></el-table-column>
+        <el-table-column header-align="center" align="center" label="版本号" min-width="100"
+                         prop="version"></el-table-column>
+        <el-table-column header-align="center" align="center" label="软件配置" min-width="100"
+                         prop="config"></el-table-column>
         <el-table-column header-align="center" align="center" label="状态" min-width="150">
           <template slot-scope="scope">
             <el-switch
@@ -45,12 +49,15 @@
           </template>
         </el-table-column>
         <el-table-column header-align="center" align="center" label="期数" min-width="100" prop="stage"></el-table-column>
-        <el-table-column header-align="center" align="center" label="备注" min-width="100" prop="comment"></el-table-column>
+        <el-table-column header-align="center" align="center" label="备注" min-width="100"
+                         prop="comment"></el-table-column>
         <el-table-column header-align="center" align="center" label="操作" min-width="150" fixed="right">
           <template slot-scope="scope">
             <el-button size="small" @click="modifyIt(scope.row)" type="text">编辑</el-button>
             <el-button size="small" @click="deleteItem(scope.row.id)" type="text">删除</el-button>
-            <el-button size="small" @click="showHardware(scope.row.hardwareId)" type="text" v-show="scope.row.hardwareId!=0">硬件详情</el-button>
+            <el-button size="small" @click="showHardware(scope.row.hardwareId)" type="text"
+                       v-show="scope.row.hardwareId!=0">硬件详情
+            </el-button>
             <el-button size="small" type="text" v-show="scope.row.hardwareId==0">在多台硬件中飘移</el-button>
           </template>
         </el-table-column>
@@ -122,16 +129,20 @@
 
     <!--选择硬件-->
     <el-dialog :title="formTitleHard" :visible.sync="formVisibleHard" :close-on-click-modal="false">
-      <el-table ref="singleTable"  @current-change="chooseOne" :data="hardwareList" border highlight-current-row style="width: 100%;font-size:15px">
-        <el-table-column header-align="center" align="center" type="index" width="50" ></el-table-column>
+      <el-table ref="singleTable" @current-change="chooseOne" :data="hardwareList" border highlight-current-row
+                style="width: 100%;font-size:15px">
+        <el-table-column header-align="center" align="center" type="index" width="50"></el-table-column>
         <el-table-column header-align="center" align="center" label="硬件类型" min-width="100">
           <template slot-scope="scope">
             <span>{{scope.row.type|typeChange2}}</span>
-          </template></el-table-column>
-        <el-table-column header-align="center" align="center" label="厂商" min-width="100" prop="company"></el-table-column>
+          </template>
+        </el-table-column>
+        <el-table-column header-align="center" align="center" label="厂商" min-width="100"
+                         prop="company"></el-table-column>
         <el-table-column header-align="center" align="center" label="品牌" min-width="100" prop="brand"></el-table-column>
         <el-table-column header-align="center" align="center" label="期数" min-width="100" prop="stage"></el-table-column>
-        <el-table-column header-align="center" align="center" label="备注" min-width="100" prop="comment"></el-table-column>
+        <el-table-column header-align="center" align="center" label="备注" min-width="100"
+                         prop="comment"></el-table-column>
       </el-table>
       <el-col style="width:100%">
         <el-pagination layout="total, sizes, prev, pager, next, jumper"
@@ -155,10 +166,10 @@
             <el-option label="密码卡" :value=2></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="厂商" prop="company" >
+        <el-form-item label="厂商" prop="company">
           <el-input v-model="formDataHardWare.company" :readonly="true"></el-input>
         </el-form-item>
-        <el-form-item label="品牌" prop="brand" >
+        <el-form-item label="品牌" prop="brand">
           <el-input v-model="formDataHardWare.brand" :readonly="true"></el-input>
         </el-form-item>
         <el-form-item label="型号" prop="model">
@@ -199,339 +210,341 @@
 
 <script>
   import ElMain from "element-ui/packages/main/src/main";
-  import {softwarePage,add,changeValid,update,hardwarePage,selectById,deleteIt} from '../api/software'
-    export default {
-      components: {ElMain},
-      name: "software",
-      data(){
-        return{
-          softwareId:'',
-          findStage:'',
-          id:'',
-          softwareList:[],
-          hardwareList:[],
-          submitLoading:false,
-          listLoading: false, //是否显示加载动画
+  import {softwarePage, add, changeValid, update, hardwarePage, selectById, deleteIt} from '../api/software'
 
-          total: 0,
-          pageIndex: 1, //页码
-          pageSize: this.CONSTANT.PAGE_SIZE, //分页大小
-          pageSizes: this.CONSTANT.PAGE_SIZES, //分页大小选择列表
+  export default {
+    components: {ElMain},
+    name: "software",
+    data() {
+      return {
+        softwareId: '',
+        findStage: '',
+        id: '',
+        softwareList: [],
+        hardwareList: [],
+        submitLoading: false,
+        listLoading: false, //是否显示加载动画
 
-          total2: 0,
-          pageIndex2: 1, //页码
-          pageSize2: this.CONSTANT.PAGE_SIZE, //分页大小
-          pageSizes2: this.CONSTANT.PAGE_SIZES, //分页大小选择列表
+        total: 0,
+        pageIndex: 1, //页码
+        pageSize: this.CONSTANT.PAGE_SIZE, //分页大小
+        pageSizes: this.CONSTANT.PAGE_SIZES, //分页大小选择列表
 
-          formTitleHard:'选择硬件',
-          formVisibleHard:false,
+        total2: 0,
+        pageIndex2: 1, //页码
+        pageSize2: this.CONSTANT.PAGE_SIZE, //分页大小
+        pageSizes2: this.CONSTANT.PAGE_SIZES, //分页大小选择列表
 
-          formTitleShowHardware:'挂载硬件详情',
-          formVisibleShowHardware:false,
+        formTitleHard: '选择硬件',
+        formVisibleHard: false,
 
-          formVisible: false, //界面是否显示
-          formTitle: '', //界面标题
-          formRules: {
-            type: [
-              {required: true, message: '请选择软件类型', trigger: 'blur'}
-            ],
-            company: [
-              {required: true, message: '请输入厂商', trigger: 'blur'}
-            ],
-            name:[
-              {required:true,message:"请输入名称",trigger:'blur'}
-            ],
-            version:[
-              {required:true,message:"请输入版本号",trigger:'blur'}
-            ],
-            config:[
-              {required:true,message:"请输入软件配置",trigger:'blur'}
-            ],
-            status:[
-              {required:true,message:"请选择状态",trigger:'blur'}
-            ],
-            deployDate:[
-              {required:true,message:"请输入部署日期",trigger:'blur'}
-            ],
-            stage:[
-              {required:true,message:"请输入期数",trigger:'blur'},
-              {type: 'number',message:"请输入数字",trigger:'blur'}
-            ],
-            hardwareId:[
-              {required:true,message:"请选择相关硬件",trigger:'blur'}
-            ]
-          },
-          formData:{
-            type:'',
-            company:'',
-            name:'',
-            version:'',
-            config:'',
-            status:'',
-            deployDate:'',
-            stage:undefined,
-            comment:'',
-            customerId:'',
-            hardwareId:'',
-          },
-          formDataHardWare:{},
+        formTitleShowHardware: '挂载硬件详情',
+        formVisibleShowHardware: false,
 
-          action:'',//add 新增;modify 编辑
-        }
-      },
-      methods:{
-        deleteItem(id){
-          this.$confirm('确认删除该记录吗?', '提示', {
-            type: 'warning'
-          }).then(() => {
-            deleteIt(id).then((res) => {
-              if (res.data.code == 0) {
-                this.$message({
-                  message: '删除成功',
-                  type: 'success'
-                });
-              } else {
-                this.$message({
-                  message: '删除失败',
-                  type: 'error'
-                });
-              }
-              this.getList();
-            });
-          }).catch(() => {
-            if (error) console.log(error);
-          });
+        formVisible: false, //界面是否显示
+        formTitle: '', //界面标题
+        formRules: {
+          type: [
+            {required: true, message: '请选择软件类型', trigger: 'blur'}
+          ],
+          company: [
+            {required: true, message: '请输入厂商', trigger: 'blur'}
+          ],
+          name: [
+            {required: true, message: "请输入名称", trigger: 'blur'}
+          ],
+          version: [
+            {required: true, message: "请输入版本号", trigger: 'blur'}
+          ],
+          config: [
+            {required: true, message: "请输入软件配置", trigger: 'blur'}
+          ],
+          status: [
+            {required: true, message: "请选择状态", trigger: 'blur'}
+          ],
+          deployDate: [
+            {required: true, message: "请输入部署日期", trigger: 'blur'}
+          ],
+          stage: [
+            {required: true, message: "请输入期数", trigger: 'blur'},
+            {type: 'number', message: "请输入数字", trigger: 'blur'}
+          ],
+          hardwareId: [
+            {required: true, message: "请选择相关硬件", trigger: 'blur'}
+          ]
         },
-        chooseOne(val) {
-          this.$confirm('确认选择吗？', '提示', {}).then(() => {
-            this.formData.hardwareId = val.id;
-            this.formVisibleHard=false;
-          })
+        formData: {
+          type: '',
+          company: '',
+          name: '',
+          version: '',
+          config: '',
+          status: '',
+          deployDate: '',
+          stage: undefined,
+          comment: '',
+          customerId: '',
+          hardwareId: '',
         },
-        showHardware(id){
-          selectById(id).then(res => {
-            if (res.data.code == 0) {
-             this.formDataHardWare=res.data.data;
-             this.formVisibleShowHardware=true;
-            }
-          }).catch((error) => {
-            if (error) console.log(error);
-          });
-        },
-        getHardwareList(){
-          const params = new FormData;
-          params.append('page',this.pageIndex2);
-          params.append('limit',this.pageSize2);
-          params.append('customer_id',this.id);
-          params.append('keyword',"");
-          hardwarePage(params).then(res => {
-            this.total2 = res.data.page.totalCount;
-            this.hardwareList=res.data.page.list;
-          }).catch((error) => {
-            if (error) console.log(error);
-          });
-        },
-        chooseHardware(){
-          this.formVisibleHard=true;
-          this.getHardwareList();
-        },
-        saveSubmit(){
-          this.$confirm('确认提交吗？', '提示', {}).then(() => {
-            this.submitLoading = true;
-            if(this.action=='add'){
-              let software={
-                type:this.formData.type,
-                company:this.formData.company,
-                name:this.formData.name,
-                version:this.formData.version,
-                config:this.formData.config,
-                status:this.formData.status,
-                deployDate:this.formData.deployDate,
-                stage:this.formData.stage,
-                comment:this.formData.comment,
-                customerId:this.id,
-                hardwareId:this.formData.hardwareId,
-              };
-              add(software).then(res => {
-                this.submitLoading = false;
-                if (res.data.code == 0) {
-                  this.formVisible = false;
-                  this.getList(); //重新加载数据
-                  this.$message({
-                    message: '添加成功！',
-                    type: 'success'
-                  });
-                } else {
-                  this.$message({
-                    message: '添加失败！',
-                    type: 'error'
-                  });
-                }
-              }).catch((error) => {
-                this.submitLoading = false;
-                if (error) console.log(error);
-              });
-            }else{
-              let software={
-                type:this.formData.type,
-                company:this.formData.company,
-                name:this.formData.name,
-                version:this.formData.version,
-                config:this.formData.config,
-                status:this.formData.status,
-                deployDate:this.formData.deployDate,
-                stage:this.formData.stage,
-                comment:this.formData.comment,
-                customerId:this.id,
-                hardwareId:this.formData.hardwareId,
-                id:this.softwareId,
-              };
-              update(software).then(res => {
-                this.submitLoading = false;
-                if (res.data.code == 0) {
-                  this.formVisible = false;
-                  this.getList(); //重新加载数据
-                  this.$message({
-                    message: '编辑成功！',
-                    type: 'success'
-                  });
-                } else {
-                  this.$message({
-                    message: '编辑失败！',
-                    type: 'error'
-                  });
-                }
-              }).catch((error) => {
-                this.submitLoading = false;
-                if (error) console.log(error);
-              });
-            }
-          });
-        },
-        modifyIt(item){
-          this.formVisible=true;
-          this.formTitle='编辑软件';
-          this.action='modify';
-          this.formData={
-              type:item.type,
-              company:item.type,
-              name:item.name,
-              version:item.version,
-              config:item.config,
-              status:item.status,
-              deployDate:item.deployDate,
-              stage:item.stage,
-              comment:item.comment,
-              customerId:item.customerId,
-              hardwareId:item.hardwareId,
-          },
-          this.softwareId=item.id;
-        },
-        changeStatus(id){
-          changeValid(id).then(res => {
+        formDataHardWare: {},
+
+        action: '',//add 新增;modify 编辑
+      }
+    },
+    methods: {
+      deleteItem(id) {
+        this.$confirm('确认删除该记录吗?', '提示', {
+          type: 'warning'
+        }).then(() => {
+          deleteIt(id).then((res) => {
             if (res.data.code == 0) {
               this.$message({
-                message: '修改成功！',
+                message: '删除成功',
                 type: 'success'
               });
             } else {
               this.$message({
-                message: '修改失败！',
+                message: '删除失败',
                 type: 'error'
               });
             }
-          }).catch((error) => {
-            if (error) console.log(error);
+            this.getList();
           });
-        },
-        showAdd(){
-          this.formVisible=true;
-          this.formTitle='新增软件';
-          this.action='add';
-          this.formData={
-            type:'',
-              company:'',
-              name:'',
-              version:'',
-              config:'',
-              status:'',
-              deployDate:'',
-              stage:undefined,
-              comment:'',
-              customerId:'',
-              hardwareId:'',
-          };
-        },
-        stageSearch(){
-          this.getList();
-        },
-        getList(){
-          this.listLoading = true;
-          const params = new FormData;
-          params.append('page',this.pageIndex);
-          params.append('limit',this.pageSize);
-          params.append('customer_id',this.id);
-          params.append('keyword',this.findStage);
-          softwarePage(params).then(res => {
-            this.listLoading = false;
-            this.total = res.data.page.totalCount;
-            this.softwareList=res.data.page.list;
-          }).catch((error) => {
-            this.listLoading = false;
-            if (error) console.log(error);
-          });
-        },
-        //分页
-        handleSizeChange(val) { //改变分页大小
-          this.pageSize = val;
-          this.getList();
-        },
-        handleCurrentChange(val) { //页码跳转
-          this.pageIndex = val;
-          this.getList();
-        },
-        //分页2
-        handleSizeChange2(val) { //改变分页大小
-          this.pageSize2 = val;
-          this.getHardwareList();
-        },
-        handleCurrentChange2(val) { //页码跳转
-          this.pageIndex2 = val;
-          this.getHardwareList();
-        },
+        }).catch(() => {
+          if (error) console.log(error);
+        });
       },
-      created(){
-        this.id=this.$route.query.id;
-        this.formData.customerId=this.id;
+      chooseOne(val) {
+        this.$confirm('确认选择吗？', '提示', {}).then(() => {
+          this.formData.hardwareId = val.id;
+          this.formVisibleHard = false;
+        })
+      },
+      showHardware(id) {
+        selectById(id).then(res => {
+          if (res.data.code == 0) {
+            this.formDataHardWare = res.data.data;
+            this.formVisibleShowHardware = true;
+          }
+        }).catch((error) => {
+          if (error) console.log(error);
+        });
+      },
+      getHardwareList() {
+        const params = new FormData;
+        params.append('page', this.pageIndex2);
+        params.append('limit', this.pageSize2);
+        params.append('customer_id', this.id);
+        params.append('keyword', "");
+        hardwarePage(params).then(res => {
+          this.total2 = res.data.page.totalCount;
+          this.hardwareList = res.data.page.list;
+        }).catch((error) => {
+          if (error) console.log(error);
+        });
+      },
+      chooseHardware() {
+        this.formVisibleHard = true;
+        this.getHardwareList();
+      },
+      saveSubmit() {
+        this.$confirm('确认提交吗？', '提示', {}).then(() => {
+          this.submitLoading = true;
+          if (this.action == 'add') {
+            let software = {
+              type: this.formData.type,
+              company: this.formData.company,
+              name: this.formData.name,
+              version: this.formData.version,
+              config: this.formData.config,
+              status: this.formData.status,
+              deployDate: this.formData.deployDate,
+              stage: this.formData.stage,
+              comment: this.formData.comment,
+              customerId: this.id,
+              hardwareId: this.formData.hardwareId,
+            };
+            add(software).then(res => {
+              this.submitLoading = false;
+              if (res.data.code == 0) {
+                this.formVisible = false;
+                this.getList(); //重新加载数据
+                this.$message({
+                  message: '添加成功！',
+                  type: 'success'
+                });
+              } else {
+                this.$message({
+                  message: '添加失败！',
+                  type: 'error'
+                });
+              }
+            }).catch((error) => {
+              this.submitLoading = false;
+              if (error) console.log(error);
+            });
+          } else {
+            let software = {
+              type: this.formData.type,
+              company: this.formData.company,
+              name: this.formData.name,
+              version: this.formData.version,
+              config: this.formData.config,
+              status: this.formData.status,
+              deployDate: this.formData.deployDate,
+              stage: this.formData.stage,
+              comment: this.formData.comment,
+              customerId: this.id,
+              hardwareId: this.formData.hardwareId,
+              id: this.softwareId,
+            };
+            update(software).then(res => {
+              this.submitLoading = false;
+              if (res.data.code == 0) {
+                this.formVisible = false;
+                this.getList(); //重新加载数据
+                this.$message({
+                  message: '编辑成功！',
+                  type: 'success'
+                });
+              } else {
+                this.$message({
+                  message: '编辑失败！',
+                  type: 'error'
+                });
+              }
+            }).catch((error) => {
+              this.submitLoading = false;
+              if (error) console.log(error);
+            });
+          }
+        });
+      },
+      modifyIt(item) {
+        this.formVisible = true;
+        this.formTitle = '编辑软件';
+        this.action = 'modify';
+        this.formData = {
+          type: item.type,
+          company: item.type,
+          name: item.name,
+          version: item.version,
+          config: item.config,
+          status: item.status,
+          deployDate: item.deployDate,
+          stage: item.stage,
+          comment: item.comment,
+          customerId: item.customerId,
+          hardwareId: item.hardwareId,
+        },
+          this.softwareId = item.id;
+      },
+      changeStatus(id) {
+        changeValid(id).then(res => {
+          if (res.data.code == 0) {
+            this.$message({
+              message: '修改成功！',
+              type: 'success'
+            });
+          } else {
+            this.$message({
+              message: '修改失败！',
+              type: 'error'
+            });
+          }
+        }).catch((error) => {
+          if (error) console.log(error);
+        });
+      },
+      showAdd() {
+        this.formVisible = true;
+        this.formTitle = '新增软件';
+        this.action = 'add';
+        this.formData = {
+          type: '',
+          company: '',
+          name: '',
+          version: '',
+          config: '',
+          status: '',
+          deployDate: '',
+          stage: undefined,
+          comment: '',
+          customerId: '',
+          hardwareId: '',
+        };
+      },
+      stageSearch() {
         this.getList();
       },
-      filters: {
-        typeChange(type) {
-          const typeMap = {
-            1: '操作系统',
-            2: '数据库',
-            3: 'web服务器',
-            0: '其他',
-          }
-          return typeMap[type]
-        },
-        typeChange2(type) {
-          const typeMap = {
-            1: '服务器',
-            2: '密码卡',
-          }
-          return typeMap[type]
-        },
-      }
+      getList() {
+        this.listLoading = true;
+        const params = new FormData;
+        params.append('page', this.pageIndex);
+        params.append('limit', this.pageSize);
+        params.append('customer_id', this.id);
+        params.append('keyword', this.findStage);
+        softwarePage(params).then(res => {
+          this.listLoading = false;
+          this.total = res.data.page.totalCount;
+          this.softwareList = res.data.page.list;
+        }).catch((error) => {
+          this.listLoading = false;
+          if (error) console.log(error);
+        });
+      },
+      //分页
+      handleSizeChange(val) { //改变分页大小
+        this.pageSize = val;
+        this.getList();
+      },
+      handleCurrentChange(val) { //页码跳转
+        this.pageIndex = val;
+        this.getList();
+      },
+      //分页2
+      handleSizeChange2(val) { //改变分页大小
+        this.pageSize2 = val;
+        this.getHardwareList();
+      },
+      handleCurrentChange2(val) { //页码跳转
+        this.pageIndex2 = val;
+        this.getHardwareList();
+      },
+    },
+    created() {
+      this.id = this.$route.query.id;
+      this.formData.customerId = this.id;
+      this.getList();
+    },
+    filters: {
+      typeChange(type) {
+        const typeMap = {
+          1: '操作系统',
+          2: '数据库',
+          3: 'web服务器',
+          0: '其他',
+        }
+        return typeMap[type]
+      },
+      typeChange2(type) {
+        const typeMap = {
+          1: '服务器',
+          2: '密码卡',
+        }
+        return typeMap[type]
+      },
     }
+  }
 </script>
 
 <style scoped>
-  .toolbar{
+  .toolbar {
     background: #f2f2f2;
-    padding:10px;
+    padding: 10px;
   }
-  .form-item{
-    margin-bottom: 0px!important;
+
+  .form-item {
+    margin-bottom: 0px !important;
   }
 </style>

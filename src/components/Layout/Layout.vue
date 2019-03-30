@@ -23,28 +23,30 @@
 
 <script>
   import Breadcrumb from '../Breadcrumb'
-    export default {
-        name: "layout",
-      data(){
-        return{
-          sysName:'CRM',
-        }
-      },
-      components:{
-          Breadcrumb
+
+  export default {
+    name: "layout",
+    data() {
+      return {
+        sysName: 'CRM',
       }
+    },
+    components: {
+      Breadcrumb
     }
+  }
 </script>
 
 <style scoped>
-  .layout{
+  .layout {
     border: 1px solid #d7dde4;
     background: #f5f7f9;
     position: relative;
     border-radius: 4px;
     overflow: hidden;
   }
-  .layout-logo{
+
+  .layout-logo {
     width: 100px;
     height: 30px;
     border-radius: 3px;
@@ -52,17 +54,19 @@
     position: relative;
     top: 15px;
     left: 20px;
-    color:#fff;
+    color: #fff;
     font-size: 22px;
     text-align: center;
     margin-top: -1.5vh;
   }
-  .layout-nav{
+
+  .layout-nav {
     width: 420px;
     margin: 0 auto;
     margin-right: 20px;
   }
-  .layout-footer-center{
+
+  .layout-footer-center {
     text-align: center;
   }
 </style>
