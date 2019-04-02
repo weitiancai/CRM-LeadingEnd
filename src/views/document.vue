@@ -26,7 +26,7 @@
           v-show="upshow"
           :show-file-list="false"
         >
-          <el-button size="small" type="primary" >点击上传</el-button>
+          <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
         <el-table
           :data="treechildList"
@@ -81,9 +81,7 @@
                   @click="filemore(scope.$index, scope.row)"
                   style="margin-left: -1px">更多</el-button>
                 <el-dropdown-menu slot="dropdown" style="margin:-10px;">
-                  <router-link :to="{path:'/previewFile',query:{id:scope.row.id}}">
-                    <el-dropdown-item>预览</el-dropdown-item>
-                  </router-link>
+                  <el-dropdown-item >预览</el-dropdown-item>
                   <el-dropdown-item >删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -193,7 +191,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.native="formVisibleedit = false">取消</el-button>
+        <el-button @click.native="formVisibleeditfile = false">取消</el-button>
         <el-button type="primary" v-on:click="editfileSubmitBtn()" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>
