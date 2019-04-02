@@ -11,6 +11,21 @@ export function getTreeById(customer_id) {
     customer_id
   });
 }
+
+/**
+ * 根据客户id返回文件夹
+ * @param data
+ */
+
+export function uploadDocument(data) {
+  return request({
+    url: '/documenttree/uploadDocument',
+    method: 'post',
+    data
+  });
+}
+
+
 /**
  * 添加文件夹
  * @param data
