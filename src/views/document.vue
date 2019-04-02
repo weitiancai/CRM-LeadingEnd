@@ -26,7 +26,7 @@
           v-show="upshow"
           :show-file-list="false"
         >
-          <el-button size="small" type="primary" @cilck="uplo">点击上传</el-button>
+          <el-button size="small" type="primary" >点击上传</el-button>
         </el-upload>
         <el-table
           :data="treechildList"
