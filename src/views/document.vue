@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
   <section>
 
@@ -14,16 +15,18 @@
       </el-col>
       <el-col :span="16"><div class=" bg-purple1" >
         <el-upload
-          class="upload-demo"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :on-preview="uploadPreview"
-          :on-remove="uploadRemove"
-          :before-remove="beforeRemove"
-          multiple
-          :limit="10"
-          :on-exceed="uploadExceed"
-          :file-list="fileList">
-          <el-button size="small" type="primary">点击上传</el-button>
+          name="file"
+          :on-success="onSuccess"
+          :on-error="onError"
+          ref="upload"
+          :action=url
+          :data="ufile"
+          :dropdownlist="false"
+          :before-upload="beuploadfile"
+          v-show="upshow"
+          :show-file-list="false"
+        >
+          <el-button size="small" type="primary" @cilck="uplo">点击上传</el-button>
         </el-upload>
         <el-table
           :data="treechildList"
@@ -197,10 +200,12 @@
 
 <script>
   import {getTreeById,getDocumentChildren,getDocumentChildrens,addDirectory,deleteDirectoryById} from '../api/document'
-  import { update,download,updatefile} from '../api/document'
+  import { update,download,updatefile,uploadDocument} from '../api/document'
   export default {
     data() {
       return {
+        upshow:false,
+        url:'',
         radio:'',
         fileList:[],
         treeList:[],
@@ -223,6 +228,15 @@
         downaddress:'',
         downfilename:'',
         fileId:'',
+        ufile:{
+          name:'',
+          upload_user_id:'',
+          upload_date:'',
+          comment:'',
+          customer_id:'',
+          document_tree_id:'',
+          file:''
+        },
         formVisibleedit:false,
         formVisibleson:false,
         formVisible:false,
@@ -256,9 +270,7 @@
             uploadDate:'',
             uploadUserId:'',
           }
-
         },
-
         formRules: {
           name: [
             {required: true, message: '不能为空', trigger: 'blur'}
@@ -268,11 +280,6 @@
       }
 
     },
-    // computed: {
-    //   iconName() {
-    //     return `#icon-${this.iconClass}`
-    //   }
-    // },
     methods: {
       getList(){
         this.customerid=this.customerlist;
@@ -363,11 +370,6 @@
           this.treesonList=res.data.data;
         })
       },
-      uploadPreview(){
-      },
-      uploadRemove(){},
-      beforeRemove(){},
-      uploadExceed(){},
       filedown(data,node){
         this.downfilename=node.name;
         download(node.id).then(res=>{
@@ -412,7 +414,6 @@
       filemore(data,node){
 
       },
-      fileedit(){},
       /*知识点树*/
       renderContent(h, { node, data, store }){
         return (
@@ -432,11 +433,11 @@
         </span>);
       },
       handleNodeClick(data){
+        this.upshow=true;
+        this.ufile.document_tree_id=data.id;
         this.childid=data.id;
         getDocumentChildren(this.childid).then(res=>{
           this.treechildList=res.data.data;
-          console.log(this.treechildList);
-          console.log("cyhcyhcyh");
           this.typeselect=res.data.data;
           for(let i=0;i<this.typeselect.length;i++)
           {
@@ -475,7 +476,50 @@
         })
       },
 
-
+      beuploadfile(file){
+        this.ufile.name=file.name;
+        this.ufile.customer_id=this.customerid;
+      },
+      onSuccess: function (response, file) {
+        this.$refs.upload.clearFiles();
+        getDocumentChildren(this.ufile.document_tree_id).then(res=>{
+          this.treechildList=res.data.data;
+          this.typeselect=res.data.data;
+          for(let i=0;i<this.typeselect.length;i++)
+          {
+            this.typename=this.typeselect[i].name.split(".");
+            this.typenamelength=this.typename.length;
+            this.filename=this.typename[this.typenamelength-1];
+            if(this.filename==='txt')
+            {
+              this.treechildList[i].filetype='txt';
+            }
+            else if(this.filename==='doc'||this.filename==='docx')
+            {
+              this.treechildList[i].filetype='word';
+            }
+            else if(this.filename==='els'||this.filename==='elsx')
+            {
+              this.treechildList[i].filetype='excel';
+            }
+            else if(this.filename==='pdf')
+            {
+              this.treechildList[i].filetype='pdf';
+            }
+            else if(this.filename==='ppt')
+            {
+              this.treechildList[i].filetype='excel';
+            }
+            else
+            {
+              this.treechildList[i].filetype='null';
+            }
+          }
+        })
+      },
+      onError: function () {
+        console.log("文件上传失败");
+      },
 //增加节点
       add(){
         this.addformData.customerId=this.formData.customerid;
@@ -508,8 +552,6 @@
         this.formVisibleson = true;
         this.formData.parentid=data.id;
         this.formData.customerid= this.customerid;
-        /* this.triggerCurrenNodeData=data;
-         this.triggerCurrenNode = data.id;*/
       },
       //编辑节点名称
       edit(data){
@@ -568,6 +610,7 @@
       },
     },
     mounted() {
+      this.url='/api/documenttree/uploadDocument';
       this.customerlist = this.$route.query.id;
       this.getList();
     }
