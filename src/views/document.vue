@@ -26,7 +26,7 @@
           v-show="upshow"
           :show-file-list="false"
         >
-          <el-button size="small" type="primary" @cilck="uplo">点击上传</el-button>
+          <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
         <el-table
           :data="treechildList"
@@ -191,7 +191,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.native="formVisibleedit = false">取消</el-button>
+        <el-button @click.native="formVisibleeditfile = false">取消</el-button>
         <el-button type="primary" v-on:click="editfileSubmitBtn()" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>
