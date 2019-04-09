@@ -81,7 +81,7 @@
                   @click="filemore(scope.$index, scope.row)"
                   style="margin-left: -1px">更多</el-button>
                 <el-dropdown-menu slot="dropdown" style="margin:-10px;">
-                  <router-link :to="{path:'/preview-file/',query:{id:scope.row.id}}">
+                  <router-link :to="{path:'/previewFile',query:{id:scope.row.id}}">
                     <el-dropdown-item>预览</el-dropdown-item>
                   </router-link>
                   <el-dropdown-item >删除</el-dropdown-item>
