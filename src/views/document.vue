@@ -3,36 +3,24 @@
   <section>
 
     <el-row>
-      <el-col :span="6" style="margin-top:3%;margin-left:2%;">
+      <el-col :span="4" style="margin-top:3%;margin-left:2%;">
         <el-tree
           :data="treeList"
           :props="defaultProps"
           :render-content="renderContent"
           node-key="id"
+          :default-checked-keys="resourceCheckedKey"
           @node-click="handleNodeClick"
         >
         </el-tree>
       </el-col>
       <el-col :span="16"><div class=" bg-purple1" >
-        <el-upload
-          name="file"
-          :on-success="onSuccess"
-          :on-error="onError"
-          ref="upload"
-          :action=url
-          :data="ufile"
-          :dropdownlist="false"
-          :before-upload="beuploadfile"
-          v-show="upshow"
-          :show-file-list="false"
-        >
-          <el-button size="small" type="primary">点击上传</el-button>
-        </el-upload>
+        <el-button size="small" type="primary" @click="addfileinfo" v-show="upshow">点击上传</el-button>
         <el-table
           :data="treechildList"
           :props="defaultProps"
           empty-text=" "
-          style="width: 100%">a
+          style="width: 100%">
           <el-table-column
             prop="name"
             label="文件名"
@@ -55,8 +43,11 @@
             label="简介">
           </el-table-column>
           <el-table-column
-            prop="time"
+            prop="uploadDate"
             label="时间">
+            <template slot-scope="scope">
+              <span>{{scope.row.uploadDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="dos"
@@ -68,12 +59,14 @@
                 @click="filedown(scope.$index, scope.row)">
                 <a  :href="downaddress" :download="downfilename" @click="clear"> 下载</a>
               </el-button>
+
               <el-button
                 size="mini"
                 type="primary"
                 plain
-                @click="fileEdit(scope.$index, scope.row)"
-                style="margin-left: -1px">编辑</el-button>
+                @click="fileupdate(scope.$index, scope.row)"
+                style="margin-left: -1px">更新</el-button>
+
               <el-dropdown >
                 <el-button
                   size="mini"
@@ -89,7 +82,6 @@
             </template>
           </el-table-column>
         </el-table>
-
         <el-table
           :data="treesonList"
           :props="defaultProps"
@@ -113,7 +105,7 @@
             label="简介">
           </el-table-column>
           <el-table-column
-            prop="time"
+            prop="uploadDate"
             label="时间">
           </el-table-column>
 
@@ -158,10 +150,56 @@
         <el-button type="primary" v-on:click="editSubmitBtn()" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>-->
+    <!--更新文件-->
+   <el-dialog :title="formTitle" :visible.sync="formVisibleupdatefileinfo" :close-on-click-modal="false">
+      <el-form :model="updateData" label-width="auto" :rules="formRules" ref="updateData">
+        <el-form-item label="为上传文件添加简介" prop="comment">
+          <el-input  v-model="updateData.comment" @keyup.enter.native="fileinfo"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-upload ref="update"
+                         :data="updateData"
+                         :show-file-list="false"
+                         :action=updateUrl
+                         :on-success="handleSucess"
+                         :on-error="handleError"
+                           :before-upload="beupdatefile"
+                       >
+          <el-button type="primary" size="small"  v-on:click="updatefi" :loading="submitLoading">提交</el-button>
+        </el-upload>
+        <el-button size="small" @click.native="formVisibleupdatefileinfo = false" >取消</el-button>
+      </div>
+    </el-dialog>
 
+    <!--文件comment介绍-->
+    <el-dialog :title="formTitle" :visible.sync="formVisiblefileinfo" :close-on-click-modal="false">
+      <el-form :model="ufile" label-width="auto" :rules="formRules" ref="ufile">
+        <el-form-item label="为上传文件添加简介" prop="comment">
+          <el-input  v-model="ufile.comment" @keyup.enter.native="fileinfo"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
 
-
-
+        <el-upload
+          name="file"
+          :on-success="onSuccess"
+          :on-error="onError"
+          ref="upload"
+          :action=url
+          :data="ufile"
+          :dropdownlist="false"
+          :before-upload="beuploadfile"
+          v-show="upshow"
+          :show-file-list="false"
+          style="float:right;margin-left:1%"
+        >
+          <el-button type="primary" size="small"  v-on:click="fileinfo" :loading="submitLoading">提交</el-button>
+        </el-upload>
+        <el-button size="small" @click.native="formVisiblefileinfo = false" >取消</el-button>
+      </div>
+    </el-dialog>
+    <!--节点添加-->
     <el-dialog :title="formTitle" :visible.sync="formVisibleson" :close-on-click-modal="false">
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="名称" prop="name">
@@ -173,6 +211,7 @@
         <el-button type="primary" v-on:click="add" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>
+    <!--节点编辑-->
     <el-dialog :title="formTitle" :visible.sync="formVisibleedit" :close-on-click-modal="false">
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="编辑名称" prop="name">
@@ -205,11 +244,16 @@
     data() {
       return {
         upshow:false,
+        formVisiblefileinfo:false,
+        formVisibleupdatefileinfo:false,
+        uploadDATE:'',
         url:'',
+        updateUrl:'',
         radio:'',
         fileList:[],
         treeList:[],
         sonList:[],
+        resourceCheckedKey:[],
         listLoading:false,
         defaultProps: {
           children: 'children',
@@ -224,7 +268,7 @@
         customerlist:'',
         customerid:'',
         childid:'',
-        backid:'',
+        backid:0,
         downaddress:'',
         downfilename:'',
         fileId:'',
@@ -237,6 +281,17 @@
           document_tree_id:'',
           file:''
         },
+        updateData:{
+          name:'',
+          upload_user_id:'',
+          upload_date:'',
+          comment:'',
+          customer_id:'',
+          document_tree_id:'',
+          file:'',
+          storageName:''
+        },
+        curstoragename:'',
         formVisibleedit:false,
         formVisibleson:false,
         formVisible:false,
@@ -286,6 +341,7 @@
         getTreeById(this.customerid).then(res => {
           this.listLoading = false;
           this.treeList=res.data.data;
+          console.log( this.treeList);
         }).catch((error) => {
           this.listLoading = false;
           if (error) console.log(error);
@@ -294,7 +350,10 @@
       getfileList(){
         getDocumentChildren(this.fileId).then(res=>{
           this.treechildList=res.data.data;
+
           this.typeselect=res.data.data;
+          console.log(this.treechildList);
+          console.log("xxxxxxxxx");
           for(let i=0;i<this.typeselect.length;i++)
           {
             this.typename=this.typeselect[i].name.split(".");
@@ -330,10 +389,12 @@
       },
       backfiles(row){
         this.backid=row.id;
+        this.resourceCheckedKey=this.backid;
+        console.log(this.resourceCheckedKey);
         getDocumentChildren(this.backid).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
-          for(let i=0;i<this.typeselect.length;i++)
+            for(let i=0;i<this.typeselect.length;i++)
           {
             this.typename=this.typeselect[i].name.split(".");
             this.typenamelength=this.typename.length;
@@ -366,9 +427,30 @@
 
         });
         getDocumentChildrens(this.backid).then(res=>{
-
           this.treesonList=res.data.data;
-        })
+        });
+        this.getList();
+        this.resourceCheckedKey=[];
+      },
+      addfileinfo(){
+        this.formVisiblefileinfo=true;
+
+      },
+      fileinfo(){
+        updatefile(this.editfileformData).then(res=>{
+          if (res.data.code==0) {
+            this.getfileList();
+
+          } else {
+            this.$message({
+              message: '添加失败',
+              type: 'error'
+            });
+          }
+          this.submitLoading=false;
+        }).catch(error=>{
+          console.log(error);
+        });
       },
       filedown(data,node){
         this.downfilename=node.name;
@@ -442,6 +524,8 @@
           for(let i=0;i<this.typeselect.length;i++)
           {
             this.typename=this.typeselect[i].name.split(".");
+            this.uploadDATE=this.typeselect[i].uploadDate.split(".");
+            this.treechildList[i].uploadDate=this.uploadDATE[0];
             this.typenamelength=this.typename.length;
             this.filename=this.typename[this.typenamelength-1];
             if(this.filename==='txt')
@@ -469,19 +553,28 @@
               this.treechildList[i].filetype='null';
             }
           }
-
         })
         getDocumentChildrens(this.childid).then(res=>{
           this.treesonList=res.data.data;
         })
       },
-
+      beupdatefile(file){
+        console.log(file);
+        this.updateData.storageName=this.curstoragename;
+        console.log("sadasdzxczcc,,,,,");
+        console.log(this.updateData);
+        console.log("[][][]");
+      },
       beuploadfile(file){
         this.ufile.name=file.name;
         this.ufile.customer_id=this.customerid;
+        this.formVisiblefileinfo=true;
+
       },
       onSuccess: function (response, file) {
-        this.$refs.upload.clearFiles();
+        console.log("shangchuangchengg");
+        this.formVisiblefileinfo = false;
+        console.log(this.ufile.document_tree_id);
         getDocumentChildren(this.ufile.document_tree_id).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
@@ -520,6 +613,61 @@
       onError: function () {
         console.log("文件上传失败");
       },
+      fileupdate( node,data){
+        console.log(data);
+        console.log(node);
+        console.log("sbsbsbsbsbbs");
+        this.curstoragename=data.storageName;
+        this.formVisibleupdatefileinfo=true;
+        this.updateData.document_tree_id=data.documentTreeId;
+  },
+      handleSucess:function (response,file) {
+        console.log("文件更新成功");
+        console.log(file);
+        console.log(response);
+        this.formVisibleupdatefileinfo=false;
+        getDocumentChildren(this.updateData.document_tree_id).then(res=>{
+          this.treechildList=res.data.data;
+          this.typeselect=res.data.data;
+          for(let i=0;i<this.typeselect.length;i++)
+          {
+            this.typename=this.typeselect[i].name.split(".");
+            this.typenamelength=this.typename.length;
+            this.filename=this.typename[this.typenamelength-1];
+            if(this.filename==='txt')
+            {
+              this.treechildList[i].filetype='txt';
+            }
+            else if(this.filename==='doc'||this.filename==='docx')
+            {
+              this.treechildList[i].filetype='word';
+            }
+            else if(this.filename==='els'||this.filename==='elsx')
+            {
+              this.treechildList[i].filetype='excel';
+            }
+            else if(this.filename==='pdf')
+            {
+              this.treechildList[i].filetype='pdf';
+            }
+            else if(this.filename==='ppt')
+            {
+              this.treechildList[i].filetype='excel';
+            }
+            else
+            {
+              this.treechildList[i].filetype='null';
+            }
+          }
+        })
+      },
+      handleError:function(){
+        console.log("文件更新失败");
+      },
+      updatefi(){
+      },
+
+
 //增加节点
       add(){
         this.addformData.customerId=this.formData.customerid;
@@ -611,6 +759,7 @@
     },
     mounted() {
       this.url='/api/documenttree/uploadDocument';
+      this.updateUrl='/api/documenttree/updateDocument'
       this.customerlist = this.$route.query.id;
       this.getList();
     }
@@ -621,15 +770,12 @@
 <style >
 
   .bg-purple1 {
-    background: #E0FFFF;
-    border:1px solid #d3dce6;
-    box-shadow:-3px -3px 10px rgba(0,0,0,0.5);
     font-size:20px;
     margin-top:2%;
     margin-left:10%;
   }
   .custom-tree-node {
-    width:100%;
+    width:50%;
     flex: 1;
     display: flex;
     align-items: center;
@@ -645,5 +791,9 @@
   }
   .el-icon-arrow-down {
     font-size: 6px;
+  }
+  .el-tree-node:focus > .el-tree-node__content
+  {
+    background-color: #E0FFFF;
   }
 </style>
