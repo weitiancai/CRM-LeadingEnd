@@ -37,9 +37,9 @@
               inactive-text="无效"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              :active-value="1"
-              :inactive-value="0"
-              @change="changeStatus(scope.row)">
+              :active-value=1
+              :inactive-value=0
+              @change="changeStatus(scope.row.id)">
             </el-switch>
           </template>
         </el-table-column>
@@ -297,7 +297,7 @@
           type: 'warning'
         }).then(() => {
           deleteIt(id).then((res) => {
-            if (res.data.code === 0) {
+            if (res.data.code == 0) {
               this.$message({
                 message: '删除成功',
                 type: 'success'
@@ -322,7 +322,7 @@
       },
       showHardware(id) {
         selectById(id).then(res => {
-          if (res.data.code === 0) {
+          if (res.data.code == 0) {
             this.formDataHardWare = res.data.data;
             this.formVisibleShowHardware = true;
           }
@@ -439,31 +439,22 @@
         },
           this.softwareId = item.id;
       },
-      changeStatus(item) {
-        this.$confirm('确认修改吗？', '提示', {}).then(() => {
-          changeValid(item.id).then(res => {
-            if (res.data.code == 0) {
-              this.$message({
-                message: '修改成功！',
-                type: 'success'
-              });
-            } else {
-              this.$message({
-                message: '修改失败！',
-                type: 'error'
-              });
-            }
-          }).catch((error) => {
-            this.submitLoading = false;
-            if (error) console.log(error);
-          });
-        }).catch(()=>{
-          if(item.status===0){
-            item.status=1;
-          }else{
-            item.status=0;
+      changeStatus(id) {
+        changeValid(id).then(res => {
+          if (res.data.code == 0) {
+            this.$message({
+              message: '修改成功！',
+              type: 'success'
+            });
+          } else {
+            this.$message({
+              message: '修改失败！',
+              type: 'error'
+            });
           }
-        })
+        }).catch((error) => {
+          if (error) console.log(error);
+        });
       },
       showAdd() {
         this.formVisible = true;

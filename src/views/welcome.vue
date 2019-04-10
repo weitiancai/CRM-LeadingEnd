@@ -136,7 +136,7 @@
           };
           add(customer).then(res => {
             this.submitLoading = false;
-            if (res.data.code === 0) {
+            if (res.data.code == 0) {
               this.formVisible = false;
               this.getList(); //重新加载数据
               this.$message({

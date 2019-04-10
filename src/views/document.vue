@@ -74,9 +74,7 @@
                   @click="filemore(scope.$index, scope.row)"
                   style="margin-left: -1px">更多</el-button>
                 <el-dropdown-menu slot="dropdown" style="margin:-10px;">
-                  <router-link :to="{path:'/preview-file/',query:{id:scope.row.id}}">
-                    <el-dropdown-item>预览</el-dropdown-item>
-                  </router-link>
+                  <el-dropdown-item >预览</el-dropdown-item>
                   <el-dropdown-item >删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -155,8 +153,8 @@
     <!--更新文件-->
    <el-dialog :title="formTitle" :visible.sync="formVisibleupdatefileinfo" :close-on-click-modal="false">
       <el-form :model="updateData" label-width="auto" :rules="formRules" ref="updateData">
-        <el-form-item label="为上传文件添加简介" prop="comment">
-          <el-input  v-model="updateData.comment" @keyup.enter.native="fileinfo"></el-input>
+        <el-form-item label="为更新文件添加简介" prop="comment">
+          <el-input  v-model="updateData.comment" @keyup.enter.native="updatefi"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -166,7 +164,7 @@
                          :action=updateUrl
                          :on-success="handleSucess"
                          :on-error="handleError"
-                           :before-upload="beupdatefile"
+                         :before-upload="beupdatefile"
                        >
           <el-button type="primary" size="small"  v-on:click="updatefi" :loading="submitLoading">提交</el-button>
         </el-upload>
@@ -283,16 +281,7 @@
           document_tree_id:'',
           file:''
         },
-        updateData:{
-          name:'',
-          upload_user_id:'',
-          upload_date:'',
-          comment:'',
-          customer_id:'',
-          document_tree_id:'',
-          file:'',
-          storageName:''
-        },
+        updateData:{},
         curstoragename:'',
         formVisibleedit:false,
         formVisibleson:false,
@@ -439,6 +428,8 @@
 
       },
       fileinfo(){
+        console.log(this.editfileformData);
+        console.log("陈宇航");
         updatefile(this.editfileformData).then(res=>{
           if (res.data.code==0) {
             this.getfileList();
@@ -622,14 +613,20 @@
         this.curstoragename=data.storageName;
         this.formVisibleupdatefileinfo=true;
         this.updateData.document_tree_id=data.documentTreeId;
+        console.log(this.updateData);
+
   },
       handleSucess:function (response,file) {
+        console.log(this.updateData);
+        console.log("wojiaochenyuhang");
         console.log("文件更新成功");
         console.log(file);
         console.log(response);
         this.formVisibleupdatefileinfo=false;
         getDocumentChildren(this.updateData.document_tree_id).then(res=>{
           this.treechildList=res.data.data;
+          console.log(this.treechildList);
+          console.log("更新上传成功");
           this.typeselect=res.data.data;
           for(let i=0;i<this.typeselect.length;i++)
           {
@@ -667,6 +664,22 @@
         console.log("文件更新失败");
       },
       updatefi(){
+      /*  console.log(this.updateData);
+        console.log("更新提交");
+        updatefile(this.updateData).then(res=>{
+          if (res.data.code==0) {
+            this.getfileList();
+
+          } else {
+            this.$message({
+              message: '添加失败',
+              type: 'error'
+            });
+          }
+          this.submitLoading=false;
+        }).catch(error=>{
+          console.log(error);
+        });*/
       },
 
 
