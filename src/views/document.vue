@@ -556,11 +556,9 @@
         })
       },
       beupdatefile(file){
-        console.log(file);
+
         this.updateData.storageName=this.curstoragename;
-        console.log("sadasdzxczcc,,,,,");
-        console.log(this.updateData);
-        console.log("[][][]");
+
       },
       beuploadfile(file){
         this.ufile.name=file.name;
@@ -611,26 +609,17 @@
         console.log("文件上传失败");
       },
       fileupdate( node,data){
-        console.log(data);
-        console.log(node);
-        console.log("sbsbsbsbsbbs");
         this.curstoragename=data.storageName;
         this.formVisibleupdatefileinfo=true;
         this.updateData.document_tree_id=data.documentTreeId;
-        console.log(this.updateData);
-
+        this.updateData.customer_id=data.customerId;
+        this.updateData.name=data.name;
+        this.updateData.id=data.id;
   },
       handleSucess:function (response,file) {
-        console.log(this.updateData);
-        console.log("wojiaochenyuhang");
-        console.log("文件更新成功");
-        console.log(file);
-        console.log(response);
         this.formVisibleupdatefileinfo=false;
         getDocumentChildren(this.updateData.document_tree_id).then(res=>{
           this.treechildList=res.data.data;
-          console.log(this.treechildList);
-          console.log("更新上传成功");
           this.typeselect=res.data.data;
           for(let i=0;i<this.typeselect.length;i++)
           {
@@ -668,22 +657,6 @@
         console.log("文件更新失败");
       },
       updatefi(){
-      /*  console.log(this.updateData);
-        console.log("更新提交");
-        updatefile(this.updateData).then(res=>{
-          if (res.data.code==0) {
-            this.getfileList();
-
-          } else {
-            this.$message({
-              message: '添加失败',
-              type: 'error'
-            });
-          }
-          this.submitLoading=false;
-        }).catch(error=>{
-          console.log(error);
-        });*/
       },
 
 
