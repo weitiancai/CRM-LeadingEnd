@@ -64,6 +64,10 @@
           ],
         },
         formData: {},
+        formVisible: false, //界面是否显示
+        formTitle: '', //界面标题
+        submitLoading: false,
+        listLoading: false, //是否显示加载动画
         action: '',//watch只看,modify修改
         id: '',
       }

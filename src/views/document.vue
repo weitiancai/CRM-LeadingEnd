@@ -74,6 +74,9 @@
                   @click="filemore(scope.$index, scope.row)"
                   style="margin-left: -1px">更多</el-button>
                 <el-dropdown-menu slot="dropdown" style="margin:-10px;">
+                  <router-link :to="{path:'/previewFile',query:{id:scope.row.id}}">
+                    <el-dropdown-item>预览</el-dropdown-item>
+                  </router-link>
                   <el-dropdown-item >预览</el-dropdown-item>
                   <el-dropdown-item >删除</el-dropdown-item>
                 </el-dropdown-menu>
@@ -82,6 +85,7 @@
             </template>
           </el-table-column>
         </el-table>
+
         <el-table
           :data="treesonList"
           :props="defaultProps"
@@ -211,7 +215,6 @@
         <el-button type="primary" v-on:click="add" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>
-    <!--节点编辑-->
     <el-dialog :title="formTitle" :visible.sync="formVisibleedit" :close-on-click-modal="false">
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="编辑名称" prop="name">
@@ -418,6 +421,7 @@
 
         });
         getDocumentChildrens(this.backid).then(res=>{
+
           this.treesonList=res.data.data;
         });
         this.getList();
