@@ -39,7 +39,7 @@
               inactive-color="#ff4949"
               :active-value=1
               :inactive-value=0
-              @change="changeStatus(scope.row)">
+              @change="changeStatus(scope.row.id)">
             </el-switch>
           </template>
         </el-table-column>
@@ -199,8 +199,8 @@
           type: 'warning'
         }).then(() => {
           deleteIt(id).then((res) => {
-            if (res.data.code === 0) {
-              if (res.data.data === 1) {
+            if (res.data.code == 0) {
+              if (res.data.data == 1) {
                 this.$message({
                   message: '存在挂载软件不可删除',
                   type: 'error'
@@ -242,36 +242,27 @@
         };
         this.hardwareId = item.id;
       },
-      changeStatus(item) {
-        this.$confirm('确认修改吗？', '提示', {}).then(() => {
-          changeValid(item.id).then(res => {
-            if (res.data.code === 0) {
-              this.$message({
-                message: '修改成功！',
-                type: 'success'
-              });
-            } else {
-              this.$message({
-                message: '修改失败！',
-                type: 'error'
-              });
-            }
-          }).catch((error) => {
-            this.submitLoading = false;
-            if (error) console.log(error);
-          });
-        }).catch(()=>{
-          if(item.status===0){
-            item.status=1;
-          }else{
-            item.status=0;
+      changeStatus(id) {
+        changeValid(id).then(res => {
+          if (res.data.code == 0) {
+            this.$message({
+              message: '修改成功！',
+              type: 'success'
+            });
+          } else {
+            this.$message({
+              message: '修改失败！',
+              type: 'error'
+            });
           }
-        })
+        }).catch((error) => {
+          if (error) console.log(error);
+        });
       },
       saveSubmit() {
         this.$confirm('确认提交吗？', '提示', {}).then(() => {
           this.submitLoading = true;
-          if (this.action === 'add') {
+          if (this.action == 'add') {
             let hardware = {
               type: this.formData.type,
               company: this.formData.company,
@@ -287,7 +278,7 @@
             };
             add(hardware).then(res => {
               this.submitLoading = false;
-              if (res.data.code === 0) {
+              if (res.data.code == 0) {
                 this.formVisible = false;
                 this.getList(); //重新加载数据
                 this.$message({
@@ -321,7 +312,7 @@
             };
             update(hardware).then(res => {
               this.submitLoading = false;
-              if (res.data.code === 0) {
+              if (res.data.code == 0) {
                 this.formVisible = false;
                 this.getList(); //重新加载数据
                 this.$message({

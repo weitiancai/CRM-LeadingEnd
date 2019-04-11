@@ -3,36 +3,27 @@
   <section>
 
     <el-row>
-      <el-col :span="6" style="margin-top:3%;margin-left:2%;">
+      <el-col :span="4" style="margin-top:1%;margin-left:2%;" :offset="1">
+        <el-button size="small" type="primary" plain @click="ad">新增根文件夹</el-button>
         <el-tree
           :data="treeList"
           :props="defaultProps"
           :render-content="renderContent"
           node-key="id"
+          :default-checked-keys="resourceCheckedKey"
           @node-click="handleNodeClick"
         >
         </el-tree>
       </el-col>
       <el-col :span="16"><div class=" bg-purple1" >
-        <el-upload
-          name="file"
-          :on-success="onSuccess"
-          :on-error="onError"
-          ref="upload"
-          :action=url
-          :data="ufile"
-          :dropdownlist="false"
-          :before-upload="beuploadfile"
-          v-show="upshow"
-          :show-file-list="false"
-        >
-          <el-button size="small" type="primary">点击上传</el-button>
-        </el-upload>
+        <el-button size="small" type="primary" @click="addfileinfo" v-show="upshow" >点击上传</el-button>
+        <p></p>
         <el-table
           :data="treechildList"
           :props="defaultProps"
           empty-text=" "
-          style="width: 100%">a
+          style="width: 100%;"
+        >
           <el-table-column
             prop="name"
             label="文件名"
@@ -40,12 +31,25 @@
             height="60">
             <template slot-scope="scope">
             <span style="margin-left: 5px;font-size: 20px" >
-              <svg-icon v-if="scope.row.filetype==='txt'" icon-class="txt" />
-              <svg-icon v-if="scope.row.filetype==='word'" icon-class="word" />
-              <svg-icon v-if="scope.row.filetype==='pdf'" icon-class="pdf" />
-              <svg-icon v-if="scope.row.filetype==='ppt'" icon-class="ppt" />
-              <svg-icon v-if="scope.row.filetype==='null'" icon-class="null" />
-              <svg-icon v-if="scope.row.filetype==='excel'" icon-class="excel" />
+                <svg-icon v-if="scope.row.type===-1" icon-class="null" />
+              <svg-icon v-if="scope.row.type===0" icon-class="html" />
+              <svg-icon v-if="scope.row.type===1" icon-class="word" />
+              <svg-icon v-if="scope.row.type===2" icon-class="word" />
+              <svg-icon v-if="scope.row.type===3" icon-class="excel" />
+              <svg-icon v-if="scope.row.type===4" icon-class="ppt" />
+              <svg-icon v-if="scope.row.type===5" icon-class="ppt" />
+              <svg-icon v-if="scope.row.type===6" icon-class="txt" />
+              <svg-icon v-if="scope.row.type===7" icon-class="pdf" />
+              <svg-icon v-if="scope.row.type===8" icon-class="png" />
+              <svg-icon v-if="scope.row.type===9" icon-class="bmp" />
+              <svg-icon v-if="scope.row.type===10" icon-class="jpg" />
+              <svg-icon v-if="scope.row.type===11" icon-class="c" />
+              <svg-icon v-if="scope.row.type===12" icon-class="cpp" />
+              <svg-icon v-if="scope.row.type===13" icon-class="py" />
+              <svg-icon v-if="scope.row.type===14" icon-class="java" />
+              <svg-icon v-if="scope.row.type===15" icon-class="class" />
+              <svg-icon v-if="scope.row.type===16" icon-class="zip" />
+              <svg-icon v-if="scope.row.type===17" icon-class="rar" />
               {{ scope.row.name }}
             </span>
             </template>
@@ -55,8 +59,11 @@
             label="简介">
           </el-table-column>
           <el-table-column
-            prop="time"
+            prop="uploadDate"
             label="时间">
+            <template slot-scope="scope">
+              <span>{{scope.row.uploadDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="dos"
@@ -66,23 +73,25 @@
                 size="mini"
                 type="primary"
                 @click="filedown(scope.$index, scope.row)">
-                <a  :href="downaddress" :download="downfilename" @click="clear"> 下载</a>
+                下载
               </el-button>
               <el-button
                 size="mini"
                 type="primary"
                 plain
-                @click="fileEdit(scope.$index, scope.row)"
-                style="margin-left: -1px">编辑</el-button>
-              <el-dropdown >
+                @click="fileupdate(scope.$index, scope.row)"
+                style="margin-left: -1px">更新</el-button>
+              <el-dropdown  @command="deletedo">
                 <el-button
                   size="mini"
                   type="info"
                   @click="filemore(scope.$index, scope.row)"
                   style="margin-left: -1px">更多</el-button>
                 <el-dropdown-menu slot="dropdown" style="margin:-10px;">
-                    <el-dropdown-item @click="preFile(scope.row)">预览</el-dropdown-item>
-                  <el-dropdown-item >删除</el-dropdown-item>
+                  <router-link :to="{path:'/previewFile',query:{id:scope.row.id}}">
+                    <el-dropdown-item>预览</el-dropdown-item>
+                  </router-link>
+                  <el-dropdown-item command="a">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
 
@@ -95,11 +104,13 @@
           :props="defaultProps"
           @row-click="backfiles"
           empty-text=" "
-          style="width: 100%">
+          style="width: 100%"
+
+        >
           <el-table-column
             prop="name"
             label="文件夹名"
-            width="240"
+
             height="60">
             <template slot-scope="scope">
             <span style="margin-left: 5px;font-size: 20px" >
@@ -108,14 +119,14 @@
             </span>
             </template>
           </el-table-column>
-          <el-table-column
+         <!-- <el-table-column
             prop="comment"
             label="简介">
           </el-table-column>
           <el-table-column
-            prop="time"
+            prop="uploadDate"
             label="时间">
-          </el-table-column>
+          </el-table-column>-->
 
         </el-table>
       </div></el-col>
@@ -132,7 +143,18 @@
          <el-button type="primary" v-on:click="add" :loading="submitLoading">提交</el-button>
        </div>
      </el-dialog>-->
-
+    <!--根文件夹添加-->
+    <el-dialog :title="formTitle" :visible.sync="formVisibleroot" :close-on-click-modal="false">
+      <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
+        <el-form-item label="名称" prop="name">
+          <el-input  v-model="formData.name" @keyup.enter.native="addroot"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click.native="formVisibleson = false">取消</el-button>
+        <el-button type="primary" v-on:click="addroot" :loading="submitLoading">提交</el-button>
+      </div>
+    </el-dialog>
     <!--<el-dialog :title="formTitle" :visible.sync="formVisiblemore" :close-on-click-modal="false">
       <el-radio v-model="radio" label="1" style="margin-left:15%">新建子文件夹</el-radio>
       <el-radio v-model="radio" label="2">编辑文件夹</el-radio>
@@ -158,10 +180,55 @@
         <el-button type="primary" v-on:click="editSubmitBtn()" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>-->
+    <!--更新文件-->
+   <el-dialog :title="formTitle" :visible.sync="formVisibleupdatefileinfo" :close-on-click-modal="false">
+      <el-form :model="updateData" label-width="auto" :rules="formRules" ref="updateData">
+        <el-form-item label="为更新文件添加简介" prop="comment">
+          <el-input  v-model="updateData.comment" @keyup.enter.native="updatefi"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-upload ref="update"
+                         :data="updateData"
+                         :show-file-list="false"
+                         :action=updateUrl
+                         :on-success="handleSucess"
+                         :on-error="handleError"
+                         :before-upload="beupdatefile"
+                       >
+          <el-button type="primary" size="small"  v-on:click="updatefi" :loading="submitLoading">提交</el-button>
+        </el-upload>
+        <el-button size="small" @click.native="formVisibleupdatefileinfo = false" >取消</el-button>
+      </div>
+    </el-dialog>
+    <!--文件comment介绍-->
+    <el-dialog :title="formTitle" :visible.sync="formVisiblefileinfo" :close-on-click-modal="false">
+      <el-form :model="ufile" label-width="auto" :rules="formRules" ref="ufile">
+        <el-form-item label="为上传文件添加简介" prop="comment">
+          <el-input  v-model="ufile.comment" @keyup.enter.native="fileinfo"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
 
-
-
-
+        <el-upload
+          name="file"
+          :on-success="onSuccess"
+          :on-error="onError"
+          ref="upload"
+          :action=url
+          :data="ufile"
+          :dropdownlist="false"
+          :before-upload="beuploadfile"
+          v-show="upshow"
+          :show-file-list="false"
+          style="float:right;margin-left:1%"
+        >
+          <el-button type="primary" size="small"  v-on:click="fileinfo" :loading="submitLoading">提交</el-button>
+        </el-upload>
+        <el-button size="small" @click.native="formVisiblefileinfo = false" >取消</el-button>
+      </div>
+    </el-dialog>
+    <!--节点添加-->
     <el-dialog :title="formTitle" :visible.sync="formVisibleson" :close-on-click-modal="false">
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="名称" prop="name">
@@ -173,6 +240,7 @@
         <el-button type="primary" v-on:click="add" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>
+
     <el-dialog :title="formTitle" :visible.sync="formVisibleedit" :close-on-click-modal="false">
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="编辑名称" prop="name">
@@ -200,16 +268,23 @@
 
 <script>
   import {getTreeById,getDocumentChildren,getDocumentChildrens,addDirectory,deleteDirectoryById} from '../api/document'
-  import { update,download,updatefile,uploadDocument} from '../api/document'
+  import { update,download,updatefile,uploadDocument,deleteDocument} from '../api/document'
   export default {
     data() {
       return {
+        formVisibleroot:false,
         upshow:false,
+        formVisiblefileinfo:false,
+        formVisibleupdatefileinfo:false,
+        uploadDATE:'',
         url:'',
+        updateUrl:'',
         radio:'',
+        deletedocumentid:'',
         fileList:[],
         treeList:[],
         sonList:[],
+        resourceCheckedKey:[],
         listLoading:false,
         defaultProps: {
           children: 'children',
@@ -224,7 +299,7 @@
         customerlist:'',
         customerid:'',
         childid:'',
-        backid:'',
+        backid:0,
         downaddress:'',
         downfilename:'',
         fileId:'',
@@ -237,11 +312,18 @@
           document_tree_id:'',
           file:''
         },
+        updateData:{},
+        curstoragename:'',
         formVisibleedit:false,
         formVisibleson:false,
         formVisible:false,
         formTitle:'',
         editname:'',
+        addrootdata:{
+          customerId:'',
+          name:'',
+          parentId:''
+        },
         addformData:{
           customerId:'',
           name:'',
@@ -278,12 +360,8 @@
         },
         submitLoading:false,
       }
-
     },
     methods: {
-      preFile(item){
-        console.log(item);
-      },
       getList(){
         this.customerid=this.customerlist;
         getTreeById(this.customerid).then(res => {
@@ -297,13 +375,13 @@
       getfileList(){
         getDocumentChildren(this.fileId).then(res=>{
           this.treechildList=res.data.data;
+
           this.typeselect=res.data.data;
           for(let i=0;i<this.typeselect.length;i++)
           {
             this.typename=this.typeselect[i].name.split(".");
             this.typenamelength=this.typename.length;
             this.filename=this.typename[this.typenamelength-1];
-            console.log(this.filename);
             if(this.filename==='txt')
             {
               this.treechildList[i].filetype='txt';
@@ -312,7 +390,7 @@
             {
               this.treechildList[i].filetype='word';
             }
-            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
+            else if(this.filename==='els'||this.filename==='elsx')
             {
               this.treechildList[i].filetype='excel';
             }
@@ -320,9 +398,9 @@
             {
               this.treechildList[i].filetype='pdf';
             }
-            else if(this.filename==='ppt'||this.filename==='pptx')
+            else if(this.filename==='ppt')
             {
-              this.treechildList[i].filetype='ppt';
+              this.treechildList[i].filetype='excel';
             }
             else
             {
@@ -331,66 +409,98 @@
           }
 
         })
+      },
+
+      ad(){
+        this.formVisibleroot=true;
+        this.formTitle='新增根文件夹'
+      },
+      addroot(){
+        this.addrootdata.customerId=this.customerid;
+        this.addrootdata.name=this.formData.name;
+        this.addrootdata.parentId=-1;
+        this.submitLoading=true;
+        addDirectory(this.addrootdata).then(res=>{
+          if (!res.data.code) {
+            this.$message({
+              message: '添加文件夹成功',
+              type: 'success',
+            });
+            this.getList();
+            this.formVisibleroot = false;
+            this.formData.parentid='';
+            this.formData.name='';
+          } else {
+            this.$message({
+              message: '添加失败',
+              type: 'error'
+            });
+          }
+          this.submitLoading=false;
+        }).catch(error=>{
+          console.log(error);
+        });
       },
       backfiles(row){
         this.backid=row.id;
+        this.resourceCheckedKey=this.backid;
         getDocumentChildren(this.backid).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
-          for(let i=0;i<this.typeselect.length;i++)
-          {
-            this.typename=this.typeselect[i].name.split(".");
-            this.typenamelength=this.typename.length;
-            this.filename=this.typename[this.typenamelength-1];
-            if(this.filename==='txt')
-            {
-              this.treechildList[i].filetype='txt';
-            }
-            else if(this.filename==='doc'||this.filename==='docx')
-            {
-              this.treechildList[i].filetype='word';
-            }
-            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
-            {
-              this.treechildList[i].filetype='excel';
-            }
-            else if(this.filename==='pdf')
-            {
-              this.treechildList[i].filetype='pdf';
-            }
-            else if(this.filename==='ppt'||this.filename==='pptx')
-            {
-              this.treechildList[i].filetype='ppt';
-            }
-            else
-            {
-              this.treechildList[i].filetype='null';
-            }
-          }
 
         });
         getDocumentChildrens(this.backid).then(res=>{
-
           this.treesonList=res.data.data;
-        })
+        });
+        this.getList();
+        this.resourceCheckedKey=[];
       },
-      filedown(data,node){
-        this.downfilename=node.name;
-        download(node.id).then(res=>{
+      addfileinfo(){
+        this.formVisiblefileinfo=true;
+      },
+      fileinfo(){
+        updatefile(this.editfileformData).then(res=>{
+          if (res.data.code==0) {
+            this.getfileList();
+
+          } else {
+            this.$message({
+              message: '添加失败',
+              type: 'error'
+            });
+          }
+          this.submitLoading=false;
+        }).catch(error=>{
+          console.log(error);
+        });
+      },
+      filedown(node,data){
+        this.downfilename=data.name;
+          console.log(data);
+          console.log("zxczczcz");
+        download(data.id).then(res=>{
           this.downaddress=res.data.data;
-        })
+          const download_link=document.createElement("a");
+          download_link.href=this.downaddress;
+          download_link.download=data.name;
+          let ev=document.createEvent("MouseEvents");
+          ev.initMouseEvent(
+            "click",true,false,window,0,0,0,0,0,
+            false,false,false,false,0,null
+          );
+          download_link.dispatchEvent(ev);
+
+        });
+
       },
-      clear(){
-        this.downaddress='';
-        this.downfilename='';
-      },
-      fileEdit(data,node){
+
+      fileEdit(node,data){
         this.formTitle = '修改文件名称';
         this.formVisibleeditfile = true;
-        this.formData.id=node.id;
-        this.formData.name=node.name;
+        this.formData.id=data.id;
+        this.formData.name=data.name;
         this.formData.parentid=this.treesonList.parentId;
-        this.editfileformData=node;
+        this.editfileformData=data;
       },
       editfileSubmitBtn(){
         this.editfileformData.name=this.formData.name;
@@ -415,8 +525,9 @@
           console.log(error);
         });
       },
-      filemore(data,node){
-
+      filemore(node,data){
+          console.log(data);
+          this.deletedocumentid=data.id;
       },
       /*知识点树*/
       renderContent(h, { node, data, store }){
@@ -430,104 +541,108 @@
           <el-dropdown-item ><el-button  class="el-icon-plus" style="font-size: 12px;" type="text" on-click={ () => this.append(data) }>新建 </el-button>  </el-dropdown-item>
         <el-dropdown-item ><el-button class="el-icon-edit" style="font-size: 12px;color:#8FBC8F" type="text" on-click={ () => this.edit(data,node) }>编辑</el-button></el-dropdown-item>
         <el-dropdown-item ><el-button class="el-icon-delete" style="font-size: 12px;color:#A52A2A" type="text" on-click={ () => this.remove(node,data) }>删除</el-button></el-dropdown-item>
-        <el-dropdown-item >上传</el-dropdown-item>
         </el-dropdown-menu>
         </el-dropdown>
         </span>
         </span>);
       },
+          /*    <el-dropdown-item ><el-button class="el-icon-delete"
+          style="font-size: 12px;color:#A52A2A" type="text"
+          on-click={ () => this.addfileinfo(node)}>上传
+           </el-button> </el-dropdown-item>*/
       handleNodeClick(data){
         this.upshow=true;
         this.ufile.document_tree_id=data.id;
         this.childid=data.id;
         getDocumentChildren(this.childid).then(res=>{
           this.treechildList=res.data.data;
+          console.log(this.treechildList);
+          console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
           this.typeselect=res.data.data;
-          for(let i=0;i<this.typeselect.length;i++)
-          {
-            this.typename=this.typeselect[i].name.split(".");
-            this.typenamelength=this.typename.length;
-            this.filename=this.typename[this.typenamelength-1];
-            console.log(this.filename);
-            if(this.filename==='txt')
-            {
-              this.treechildList[i].filetype='txt';
-            }
-            else if(this.filename==='doc'||this.filename==='docx')
-            {
-              this.treechildList[i].filetype='word';
-            }
-            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
-            {
-              this.treechildList[i].filetype='excel';
-            }
-            else if(this.filename==='pdf')
-            {
-              this.treechildList[i].filetype='pdf';
-            }
-            else if(this.filename==='ppt'||this.filename==='pptx')
-            {
-              this.treechildList[i].filetype='ppt';
-            }
-            else
-            {
-              this.treechildList[i].filetype='null';
-            }
-          }
-
         })
         getDocumentChildrens(this.childid).then(res=>{
           this.treesonList=res.data.data;
+          console.log(this.treesonList);
+          console.log("11111111111111111111111111");
         })
       },
-
+      beupdatefile(file){
+        this.updateData.storageName=this.curstoragename;
+      },
       beuploadfile(file){
         this.ufile.name=file.name;
         this.ufile.customer_id=this.customerid;
+        this.formVisiblefileinfo=true;
       },
       onSuccess: function (response, file) {
-        this.$refs.upload.clearFiles();
+        this.formVisiblefileinfo = false;
         getDocumentChildren(this.ufile.document_tree_id).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
-          for(let i=0;i<this.typeselect.length;i++)
-          {
-            this.typename=this.typeselect[i].name.split(".");
-            this.typenamelength=this.typename.length;
-            this.filename=this.typename[this.typenamelength-1];
-            console.log(this.filename);
-            if(this.filename==='txt')
-            {
-              this.treechildList[i].filetype='txt';
-            }
-            else if(this.filename==='doc'||this.filename==='docx')
-            {
-              this.treechildList[i].filetype='word';
-            }
-            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
-            {
-              this.treechildList[i].filetype='excel';
-            }
-            else if(this.filename==='pdf')
-            {
-              this.treechildList[i].filetype='pdf';
-            }
-            else if(this.filename==='ppt'||this.filename==='pptx')
-            {
-              this.treechildList[i].filetype='ppt';
-            }
-            else
-            {
-              this.treechildList[i].filetype='null';
-            }
-          }
+
         })
       },
       onError: function () {
         console.log("文件上传失败");
       },
+      fileupdate( node,data){
+        this.curstoragename=data.storageName;
+        this.formVisibleupdatefileinfo=true;
+        this.updateData.document_tree_id=data.documentTreeId;
+        this.updateData.customer_id=data.customerId;
+        this.updateData.name=data.name;
+        this.updateData.id=data.id;
+  },
+      handleSucess:function (response,file) {
+        this.formVisibleupdatefileinfo=false;
+        getDocumentChildren(this.updateData.document_tree_id).then(res=>{
+          this.treechildList=res.data.data;
+          this.typeselect=res.data.data;
+
+        })
+      },
+      handleError:function(){
+        console.log("文件更新失败");
+      },
+      updatefi(){
+      },
+
+      deletedo(command){
+        if(command=='a') {
+          console.log("adads");
+          this.$confirm('此操作将永久删除该节点, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            deleteDocument(this.deletedocumentid).then(res=> {
+              if(!res.data.code) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+
+              }
+              getDocumentChildren(this.childid).then(res=>{
+                this.treechildList=res.data.data;
+                this.typeselect=res.data.data;
+
+              })
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+
+
+        }
+        },
 //增加节点
       add(){
+        console.log(this.formData);
+        console.log("!!!!!!");
         this.addformData.customerId=this.formData.customerid;
         this.addformData.name=this.formData.name;
         this.addformData.parentId=this.formData.parentid;
@@ -617,6 +732,7 @@
     },
     mounted() {
       this.url='/api/documenttree/uploadDocument';
+      this.updateUrl='/api/documenttree/updateDocument'
       this.customerlist = this.$route.query.id;
       this.getList();
     }
@@ -627,15 +743,12 @@
 <style >
 
   .bg-purple1 {
-    background: #E0FFFF;
-    border:1px solid #d3dce6;
-    box-shadow:-3px -3px 10px rgba(0,0,0,0.5);
     font-size:20px;
     margin-top:2%;
     margin-left:10%;
   }
   .custom-tree-node {
-    width:100%;
+    width:50%;
     flex: 1;
     display: flex;
     align-items: center;
@@ -651,5 +764,9 @@
   }
   .el-icon-arrow-down {
     font-size: 6px;
+  }
+  .el-tree-node:focus > .el-tree-node__content
+  {
+    background-color: #E0FFFF;
   }
 </style>

@@ -54,14 +54,6 @@ export default new Router({
             title: '详细信息',
           }
         },
-        {
-          path: '/previewFile',
-          component: () => import('@/views/previewFile'),
-          name: 'previewFileIndex',
-          meta: {
-            title: '预览',
-          },
-        },
       ]
     },
   ]
