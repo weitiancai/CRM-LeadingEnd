@@ -86,7 +86,11 @@
       }
     },
     beforeRouteLeave(to, from, next) {
-      this.$destroy();
+      if(to.name==="previewFile"){
+        from.meta.keepAlive=false;
+      }else{
+        this.$destroy();
+      }
       next();
     },
   }

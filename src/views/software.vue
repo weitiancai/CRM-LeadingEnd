@@ -37,9 +37,9 @@
               inactive-text="无效"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              :active-value=1
-              :inactive-value=0
-              @change="changeStatus(scope.row.id)">
+              :active-value="1"
+              :inactive-value="0"
+              @change="changeStatus(scope.row)">
             </el-switch>
           </template>
         </el-table-column>
@@ -439,8 +439,13 @@
         },
           this.softwareId = item.id;
       },
-      changeStatus(id) {
-        changeValid(id).then(res => {
+      changeStatus(item) {
+        this.$confirm('是否修改该软件状态？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+        changeValid(item.id).then(res => {
           if (res.data.code == 0) {
             this.$message({
               message: '修改成功！',
@@ -454,6 +459,17 @@
           }
         }).catch((error) => {
           if (error) console.log(error);
+        });
+        }).catch(() => {
+          this.$message({
+            type: 'warning',
+            message: '已取消修改'
+          });
+          if(item.status===0){
+            item.status=1;
+          }else{
+            item.status=0;
+          }
         });
       },
       showAdd() {
