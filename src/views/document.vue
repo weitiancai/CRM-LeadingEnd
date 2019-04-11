@@ -10,8 +10,10 @@
           :props="defaultProps"
           :render-content="renderContent"
           node-key="id"
-          :default-checked-keys="resourceCheckedKey"
+          default-expand-all
+          :current-node-key="resourceCheckedKey"
           @node-click="handleNodeClick"
+          :highlight-current="true"
         >
         </el-tree>
       </el-col>
@@ -284,7 +286,7 @@
         fileList:[],
         treeList:[],
         sonList:[],
-        resourceCheckedKey:[],
+        resourceCheckedKey:1,
         listLoading:false,
         defaultProps: {
           children: 'children',
@@ -367,6 +369,7 @@
         getTreeById(this.customerid).then(res => {
           this.listLoading = false;
           this.treeList=res.data.data;
+
         }).catch((error) => {
           this.listLoading = false;
           if (error) console.log(error);
@@ -442,18 +445,27 @@
         });
       },
       backfiles(row){
+        console.log(this.treeList);
+        console.log("0000000000000000000000");
         this.backid=row.id;
-        this.resourceCheckedKey=this.backid;
+
+
+        console.log(this.resourceCheckedKey);
         getDocumentChildren(this.backid).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
-
         });
         getDocumentChildrens(this.backid).then(res=>{
           this.treesonList=res.data.data;
         });
-        this.getList();
-        this.resourceCheckedKey=[];
+        getTreeById(this.customerid).then(res => {
+          this.listLoading = false;
+          this.treeList=res.data.data;
+          this.resourceCheckedKey=this.backid;
+        }).catch((error) => {
+          this.listLoading = false;
+          if (error) console.log(error);
+        });
       },
       addfileinfo(){
         this.formVisiblefileinfo=true;
@@ -765,7 +777,7 @@
   .el-icon-arrow-down {
     font-size: 6px;
   }
-  .el-tree-node:focus > .el-tree-node__content
+  .el-tree-node:focus > .el-tree-node__content, .el-tree-node__content:hover
   {
     background-color: #E0FFFF;
   }
