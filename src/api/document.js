@@ -39,6 +39,19 @@ export function addDirectory(data) {
   });
 }
 
+/**
+ * 删除文档
+ * @param id
+ */
+
+export function deleteDocument(id) {
+  return request({
+    url: `/documenttree/deleteDocument/${id}`,
+    method: 'get',
+    id
+  });
+}
+
 
 /**
  * 删除文件夹
