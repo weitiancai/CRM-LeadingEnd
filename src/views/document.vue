@@ -81,9 +81,7 @@
                   @click="filemore(scope.$index, scope.row)"
                   style="margin-left: -1px">更多</el-button>
                 <el-dropdown-menu slot="dropdown" style="margin:-10px;">
-                  <router-link :to="{path:'/previewFile',query:{id:scope.row.id}}">
-                    <el-dropdown-item>预览</el-dropdown-item>
-                  </router-link>
+                    <el-dropdown-item @click="preFile(scope.row)">预览</el-dropdown-item>
                   <el-dropdown-item >删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -283,6 +281,9 @@
 
     },
     methods: {
+      preFile(item){
+        console.log(item);
+      },
       getList(){
         this.customerid=this.customerlist;
         getTreeById(this.customerid).then(res => {
@@ -302,6 +303,7 @@
             this.typename=this.typeselect[i].name.split(".");
             this.typenamelength=this.typename.length;
             this.filename=this.typename[this.typenamelength-1];
+            console.log(this.filename);
             if(this.filename==='txt')
             {
               this.treechildList[i].filetype='txt';
@@ -310,7 +312,7 @@
             {
               this.treechildList[i].filetype='word';
             }
-            else if(this.filename==='els'||this.filename==='elsx')
+            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
             {
               this.treechildList[i].filetype='excel';
             }
@@ -318,9 +320,9 @@
             {
               this.treechildList[i].filetype='pdf';
             }
-            else if(this.filename==='ppt')
+            else if(this.filename==='ppt'||this.filename==='pptx')
             {
-              this.treechildList[i].filetype='excel';
+              this.treechildList[i].filetype='ppt';
             }
             else
             {
@@ -348,7 +350,7 @@
             {
               this.treechildList[i].filetype='word';
             }
-            else if(this.filename==='els'||this.filename==='elsx')
+            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
             {
               this.treechildList[i].filetype='excel';
             }
@@ -356,9 +358,9 @@
             {
               this.treechildList[i].filetype='pdf';
             }
-            else if(this.filename==='ppt')
+            else if(this.filename==='ppt'||this.filename==='pptx')
             {
-              this.treechildList[i].filetype='excel';
+              this.treechildList[i].filetype='ppt';
             }
             else
             {
@@ -446,6 +448,7 @@
             this.typename=this.typeselect[i].name.split(".");
             this.typenamelength=this.typename.length;
             this.filename=this.typename[this.typenamelength-1];
+            console.log(this.filename);
             if(this.filename==='txt')
             {
               this.treechildList[i].filetype='txt';
@@ -454,7 +457,7 @@
             {
               this.treechildList[i].filetype='word';
             }
-            else if(this.filename==='els'||this.filename==='elsx')
+            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
             {
               this.treechildList[i].filetype='excel';
             }
@@ -462,9 +465,9 @@
             {
               this.treechildList[i].filetype='pdf';
             }
-            else if(this.filename==='ppt')
+            else if(this.filename==='ppt'||this.filename==='pptx')
             {
-              this.treechildList[i].filetype='excel';
+              this.treechildList[i].filetype='ppt';
             }
             else
             {
@@ -492,6 +495,7 @@
             this.typename=this.typeselect[i].name.split(".");
             this.typenamelength=this.typename.length;
             this.filename=this.typename[this.typenamelength-1];
+            console.log(this.filename);
             if(this.filename==='txt')
             {
               this.treechildList[i].filetype='txt';
@@ -500,7 +504,7 @@
             {
               this.treechildList[i].filetype='word';
             }
-            else if(this.filename==='els'||this.filename==='elsx')
+            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
             {
               this.treechildList[i].filetype='excel';
             }
@@ -508,9 +512,9 @@
             {
               this.treechildList[i].filetype='pdf';
             }
-            else if(this.filename==='ppt')
+            else if(this.filename==='ppt'||this.filename==='pptx')
             {
-              this.treechildList[i].filetype='excel';
+              this.treechildList[i].filetype='ppt';
             }
             else
             {
