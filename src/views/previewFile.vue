@@ -6,11 +6,11 @@
 
    <el-main>
      <div  v-if="preFileInfo.type===0||preFileInfo.type===1||preFileInfo.type===2||preFileInfo.type===6" >
-
+       <div v-html="htmlContent"></div>
      </div>
    <div v-if="preFileInfo.type===5||preFileInfo.type===7">
      <el-row v-for="(item,index) in imgList">
-
+       <img width="100%" height="100%" :src="item">
      </el-row>
    </div>
    <div v-if="preFileInfo.type===3">
@@ -40,7 +40,7 @@
 
           imgList:[],
           excelList:[],
-          htmlPath:undefined,
+          htmlContent:'',
         }
       },
       methods: {
@@ -51,7 +51,7 @@
             case  0:
               htmlPreview(this.preFileInfo.id).then(res=>{
                 if (!res.data.code) {
-
+                 this.htmlContent=res.data.data.htmlContent;
                 }
               }).catch(error=>{
                 console.log(error);
@@ -60,7 +60,7 @@
             case  1:
               doc2Html(this.preFileInfo.id).then(res=>{
                 if (!res.data.code) {
-                  console.log(res);
+                  this.htmlContent=res.data.data.htmlContent;
                 }
               }).catch(error=>{
                 console.log(error);
@@ -69,7 +69,7 @@
             case  2:
               docx2Html(this.preFileInfo.id).then(res=>{
                 if (!res.data.code) {
-                  console.log(res);
+                  this.htmlContent=res.data.data.htmlContent;
                 }
               }).catch(error=>{
                 console.log(error);
@@ -87,7 +87,7 @@
             case  5:
               ppt2Image(this.preFileInfo.id).then(res=>{
                 if (!res.data.code) {
-                  console.log(res);
+                 console.log(res);
                 }
               }).catch(error=>{
                 console.log(error);
@@ -96,7 +96,7 @@
             case  6:
               txt2Html(this.preFileInfo.id).then(res=>{
                 if (!res.data.code) {
-                  console.log(res);
+                  this.htmlContent=res.data.data.htmlContent;
                 }
               }).catch(error=>{
                 console.log(error);
