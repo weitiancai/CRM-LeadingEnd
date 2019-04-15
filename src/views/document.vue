@@ -91,9 +91,7 @@
                   @click="filemore(scope.$index, scope.row)"
                   style="margin-left: -1px">更多</el-button>
                 <el-dropdown-menu slot="dropdown" style="margin:-10px;">
-                  <router-link :to="{path:'/previewFile',query:{id:scope.row.id}}">
-                    <el-dropdown-item>预览</el-dropdown-item>
-                  </router-link>
+                    <el-dropdown-item command="preFile">预览</el-dropdown-item>
                   <el-dropdown-item command="a">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -261,6 +259,7 @@
 <script>
   import {getTreeById,getDocumentChildren,getDocumentChildrens,addDirectory,deleteDirectoryById} from '../api/document'
   import { update,download,updatefile,uploadDocument,deleteDocument} from '../api/document'
+
   export default {
     data() {
       return {
@@ -351,6 +350,8 @@
           ],
         },
         submitLoading:false,
+        preFileInfo:{},
+        name:'',
       }
     },
     methods: {
@@ -383,7 +384,7 @@
             {
               this.treechildList[i].filetype='word';
             }
-            else if(this.filename==='els'||this.filename==='elsx')
+            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
             {
               this.treechildList[i].filetype='excel';
             }
@@ -391,9 +392,9 @@
             {
               this.treechildList[i].filetype='pdf';
             }
-            else if(this.filename==='ppt')
+            else if(this.filename==='ppt'||this.filename==='pptx')
             {
-              this.treechildList[i].filetype='excel';
+              this.treechildList[i].filetype='ppt';
             }
             else
             {
@@ -403,7 +404,6 @@
 
         })
       },
-
       ad(){
         this.formVisibleroot=true;
         this.formTitle='新增根文件夹'
@@ -435,8 +435,6 @@
         });
       },
       backfiles(row){
-        console.log(this.treeList);
-        console.log("0000000000000000000000");
         this.backid=row.id;
 
         getDocumentChildren(this.backid).then(res=>{
@@ -471,8 +469,6 @@
       },
       filedown(node,data){
         this.downfilename=data.name;
-          console.log(data);
-          console.log("zxczczcz");
         download(data.id).then(res=>{
           this.downaddress=res.data.data;
           const download_link=document.createElement("a");
@@ -488,7 +484,6 @@
         });
 
       },
-
       fileEdit(node,data){
         this.formTitle = '修改文件名称';
         this.formVisibleeditfile = true;
@@ -521,8 +516,8 @@
         });
       },
       filemore(node,data){
-          console.log(data);
           this.deletedocumentid=data.id;
+          this.preFileInfo=data;
       },
       /*知识点树*/
       renderContent(h, { node, data, store }){
@@ -541,24 +536,16 @@
         </span>
         </span>);
       },
-          /*    <el-dropdown-item ><el-button class="el-icon-delete"
-          style="font-size: 12px;color:#A52A2A" type="text"
-          on-click={ () => this.addfileinfo(node)}>上传
-           </el-button> </el-dropdown-item>*/
       handleNodeClick(data){
         this.upshow=true;
         this.ufile.document_tree_id=data.id;
         this.childid=data.id;
         getDocumentChildren(this.childid).then(res=>{
           this.treechildList=res.data.data;
-          console.log(this.treechildList);
-          console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
           this.typeselect=res.data.data;
         })
         getDocumentChildrens(this.childid).then(res=>{
           this.treesonList=res.data.data;
-          console.log(this.treesonList);
-          console.log("11111111111111111111111111");
         })
       },
       beupdatefile(file){
@@ -574,11 +561,14 @@
         getDocumentChildren(this.ufile.document_tree_id).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
-
         })
+        this.$message({
+          message: '上传文件成功！',
+          type: 'success'
+        });
       },
       onError: function () {
-        console.log("文件上传失败");
+        this.$message.error('上传文件失败！');
       },
       fileupdate( node,data){
         this.curstoragename=data.storageName;
@@ -601,7 +591,6 @@
       },
       updatefi(){
       },
-
       deletedo(command){
         if(command=='a') {
           console.log("adads");
@@ -633,11 +622,12 @@
 
 
         }
+        else if(command==='preFile'){
+          this.$router.push({path: '/previewFile', query: {preFileInfo:this.preFileInfo,id:this.customerlist,name:this.name}});
+        }
         },
-//增加节点
+      //增加节点
       add(){
-        console.log(this.formData);
-        console.log("!!!!!!");
         this.addformData.customerId=this.formData.customerid;
         this.addformData.name=this.formData.name;
         this.addformData.parentId=this.formData.parentid;
@@ -700,7 +690,7 @@
           console.log(error);
         });
       },
-//删除节点
+      //删除节点
       remove(node,data){
         let value=data.id;
         this.$confirm('此操作将永久删除该节点, 是否继续?', '提示', {
@@ -729,8 +719,9 @@
       this.url='/api/documenttree/uploadDocument';
       this.updateUrl='/api/documenttree/updateDocument'
       this.customerlist = this.$route.query.id;
+      this.name=this.$route.query.name;
       this.getList();
-    }
+    },
   }
 
 </script>
