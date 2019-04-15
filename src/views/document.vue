@@ -14,6 +14,7 @@
           :current-node-key="resourceCheckedKey"
           @node-click="handleNodeClick"
           :highlight-current="true"
+          empty-text="无文件夹"
         >
         </el-tree>
       </el-col>
@@ -101,7 +102,7 @@
           </el-table-column>
         </el-table>
 
-        <el-table
+     <!--   <el-table
           :data="treesonList"
           :props="defaultProps"
           @row-click="backfiles"
@@ -121,30 +122,18 @@
             </span>
             </template>
           </el-table-column>
-         <!-- <el-table-column
+         &lt;!&ndash; <el-table-column
             prop="comment"
             label="简介">
           </el-table-column>
           <el-table-column
             prop="uploadDate"
             label="时间">
-          </el-table-column>-->
+          </el-table-column>&ndash;&gt;
 
-        </el-table>
+        </el-table>-->
       </div></el-col>
     </el-row>
-    <!--新增节点-->
-    <!-- <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false">
-       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
-         <el-form-item label="名称" prop="name">
-           <el-input  v-model="formData.name" @keyup.enter.native="add"   ></el-input>
-         </el-form-item>
-       </el-form>
-       <div slot="footer" class="dialog-footer">
-         <el-button @click.native="formVisible = false">取消</el-button>
-         <el-button type="primary" v-on:click="add" :loading="submitLoading">提交</el-button>
-       </div>
-     </el-dialog>-->
     <!--根文件夹添加-->
     <el-dialog :title="formTitle" :visible.sync="formVisibleroot" :close-on-click-modal="false">
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
@@ -197,6 +186,7 @@
                          :on-success="handleSucess"
                          :on-error="handleError"
                          :before-upload="beupdatefile"
+                         style="float:right;margin-left:1%"
                        >
           <el-button type="primary" size="small"  v-on:click="updatefi" :loading="submitLoading">提交</el-button>
         </el-upload>
@@ -286,7 +276,7 @@
         fileList:[],
         treeList:[],
         sonList:[],
-        resourceCheckedKey:1,
+        resourceCheckedKey:'',
         listLoading:false,
         defaultProps: {
           children: 'children',
@@ -449,8 +439,6 @@
         console.log("0000000000000000000000");
         this.backid=row.id;
 
-
-        console.log(this.resourceCheckedKey);
         getDocumentChildren(this.backid).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
@@ -458,14 +446,9 @@
         getDocumentChildrens(this.backid).then(res=>{
           this.treesonList=res.data.data;
         });
-        getTreeById(this.customerid).then(res => {
-          this.listLoading = false;
-          this.treeList=res.data.data;
-          this.resourceCheckedKey=this.backid;
-        }).catch((error) => {
-          this.listLoading = false;
-          if (error) console.log(error);
-        });
+        this.resourceCheckedKey=this.backid;
+        this.getList();
+        console.log(this.resourceCheckedKey);
       },
       addfileinfo(){
         this.formVisiblefileinfo=true;
@@ -778,6 +761,13 @@
     font-size: 6px;
   }
   .el-tree-node:focus > .el-tree-node__content, .el-tree-node__content:hover
+  {
+    background-color: #E0FFFF;
+  }
+  .custom-tree-node{
+    font-size:20px;
+  }
+  .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content
   {
     background-color: #E0FFFF;
   }
