@@ -6,17 +6,17 @@
 
    <el-main>
      <div  v-if="preFileInfo.type===0||preFileInfo.type===1||preFileInfo.type===2||preFileInfo.type===6" >
-       <div v-html="htmlContent"></div>
+         <iframe :src="htmlURL" width="100%" height="700vh"></iframe>
      </div>
    <div v-if="preFileInfo.type===5||preFileInfo.type===7">
-     <el-row v-for="(item,index) in imgList">
+     <el-row v-for="item in imgList" :key="item">
        <img width="100%" height="100%" :src="item">
      </el-row>
    </div>
    <div v-if="preFileInfo.type===3">
      <table>
-       <tr v-for="(item,index) in excelList">
-         <template v-for="(items,indexs) in item">
+       <tr v-for="item in excelList" :key="item">
+         <template v-for="items in item">
            <td>{{items}}</td>
          </template>
        </tr>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-  import {txt2Html,ppt2Image,pdf2Image,readExcelContent,docx2Html,doc2Html,htmlPreview} from '../api/previewFile'
+  import {txt2Html,ppt2Image,pdf2Image,readExcelContent,docx2Html,doc2Html,htmlPreview,txtContentType} from '../api/previewFile'
 
     export default {
         name: "preview-file",
@@ -40,7 +40,7 @@
 
           imgList:[],
           excelList:[],
-          htmlContent:'',
+          htmlURL:'',
         }
       },
       methods: {
@@ -51,7 +51,7 @@
             case  0:
               htmlPreview(this.preFileInfo.id).then(res=>{
                 if (!res.data.code) {
-                 this.htmlContent=res.data.data.htmlContent;
+                 this.htmlURL=res.data.data.htmlPath;
                 }
               }).catch(error=>{
                 console.log(error);
@@ -60,21 +60,21 @@
             case  1:
               doc2Html(this.preFileInfo.id).then(res=>{
                 if (!res.data.code) {
-                  this.htmlContent=res.data.data.htmlContent;
+                  this.htmlURL=res.data.data.htmlPath;
                 }
               }).catch(error=>{
                 console.log(error);
               });
               break;
-            case  2:
-              docx2Html(this.preFileInfo.id).then(res=>{
-                if (!res.data.code) {
-                  this.htmlContent=res.data.data.htmlContent;
-                }
-              }).catch(error=>{
-                console.log(error);
-              });
-              break;
+            // case  2:
+            //   docx2Html(this.preFileInfo.id).then(res=>{
+            //     if (!res.data.code) {
+            //       this.htmlURL=res.data.data.htmlPath;
+            //     }
+            //   }).catch(error=>{
+            //     console.log(error);
+            //   });
+            //   break;
             case  3:
               readExcelContent(this.preFileInfo.id).then(res=>{
                 if (!res.data.code) {
@@ -87,16 +87,16 @@
             case  5:
               ppt2Image(this.preFileInfo.id).then(res=>{
                 if (!res.data.code) {
-                 console.log(res);
+                  this.imgList=res.data.data.imageUrls;
                 }
               }).catch(error=>{
                 console.log(error);
               });
               break;
             case  6:
-              txt2Html(this.preFileInfo.id).then(res=>{
+              txtContentType(this.preFileInfo.id).then(res=>{
                 if (!res.data.code) {
-                  this.htmlContent=res.data.data.htmlContent;
+                 console.log(res);
                 }
               }).catch(error=>{
                 console.log(error);
@@ -105,7 +105,7 @@
             case  7:
               pdf2Image(this.preFileInfo.id).then(res=>{
                 if (!res.data.code) {
-                  console.log(res);
+                  this.imgList=res.data.data.imageUrls;
                 }
               }).catch(error=>{
                 console.log(error);

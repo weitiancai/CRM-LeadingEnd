@@ -445,12 +445,7 @@
         });
       },
       backfiles(row){
-        console.log(this.treeList);
-        console.log("0000000000000000000000");
         this.backid=row.id;
-
-
-        console.log(this.resourceCheckedKey);
         getDocumentChildren(this.backid).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
@@ -488,8 +483,6 @@
       },
       filedown(node,data){
         this.downfilename=data.name;
-          console.log(data);
-          console.log("zxczczcz");
         download(data.id).then(res=>{
           this.downaddress=res.data.data;
           const download_link=document.createElement("a");
@@ -582,11 +575,14 @@
         getDocumentChildren(this.ufile.document_tree_id).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
-
         })
+        this.$message({
+          message: '上传文件成功！',
+          type: 'success'
+        });
       },
       onError: function () {
-        console.log("文件上传失败");
+        this.$message.error('上传文件失败！');
       },
       fileupdate( node,data){
         this.curstoragename=data.storageName;

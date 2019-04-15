@@ -167,7 +167,11 @@
     },
     mounted() {
       this.getList();
-    }
+    },
+   beforeRouteLeave(to, from, next) {
+      this.$destroy();
+      next();
+  },
   }
 </script>
 

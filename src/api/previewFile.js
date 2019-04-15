@@ -92,3 +92,16 @@ export function htmlPreview(id) {
     id
   });
 }
+
+/**
+ * txt content-type
+ * @param id
+ */
+
+export function txtContentType(id) {
+  return request({
+    url: '/txtPreview/txtContentType',
+    method: 'get',
+    id
+  });
+}
