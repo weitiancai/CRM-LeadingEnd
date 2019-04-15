@@ -15,6 +15,7 @@
           @node-click="handleNodeClick"
           :highlight-current="true"
           empty-text="无文件夹"
+          default-expand-all
         >
         </el-tree>
       </el-col>
@@ -184,7 +185,7 @@
                          :on-success="handleSucess"
                          :on-error="handleError"
                          :before-upload="beupdatefile"
-                         style="float:right;margin-left:1%"
+                   style="float:right;margin-left:1%"
                        >
           <el-button type="primary" size="small"  v-on:click="updatefi" :loading="submitLoading">提交</el-button>
         </el-upload>
