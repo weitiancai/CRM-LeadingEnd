@@ -61,7 +61,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="formVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="saveIt" :loading="submitLoading">确定</el-button>
+        <el-button type="primary" @click.native="saveIt('formData')" :loading="submitLoading">确定</el-button>
       </div>
     </el-dialog>
   </section>
@@ -113,26 +113,36 @@
         this.formVisible=true;
         this.formTitle="修改客户信息";
       },
-      saveIt() {
-        this.$confirm('确认提交吗？', '提示', {}).then(() => {
-          update(this.formData).then(res => {
-            if (res.data.code == 0) {
-              this.$message({
-                message: '修改成功！',
-                type: 'success'
+      saveIt(formData) {
+        this.$refs[formData].validate((valid) => {
+          if (valid) {
+            this.$confirm('确认提交吗？', '提示', {}).then(() => {
+              update(this.formData).then(res => {
+                if (res.data.code == 0) {
+                  this.$message({
+                    message: '修改成功！',
+                    type: 'success'
+                  });
+                } else {
+                  this.$message({
+                    message: '修改失败!',
+                    type: 'error'
+                  });
+                }
+                this.formVisible=false;
+                this.submitLoading=false;
+              }).catch((error) => {
+                if (error) console.log(error);
               });
-            } else {
-              this.$message({
-                message: '修改失败!',
-                type: 'error'
-              });
-            }
-            this.formVisible=false;
-            this.submitLoading=false;
-          }).catch((error) => {
-            if (error) console.log(error);
-          });
-        })
+            });
+          } else {
+            this.$message({
+              message: '信息未填写完整！',
+              type: 'error'
+            });
+            return false;
+          }
+        });
       }
     },
     created() {

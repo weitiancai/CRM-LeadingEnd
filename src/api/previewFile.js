@@ -42,19 +42,6 @@ export function readExcelContent(id) {
 }
 
 /**
- * pdf转换位image
- * @param id
- */
-
-export function pdf2Image(id) {
-  return request({
-    url: `/pdfPreview/pdf2Image/${id}`,
-    method: 'get',
-    id
-  });
-}
-
-/**
  * ppt转换位image
  * @param id
  */
@@ -88,19 +75,6 @@ export function txt2Html(id) {
 export function htmlPreview(id) {
   return request({
     url: `/htmlPreview/html/${id}`,
-    method: 'get',
-    id
-  });
-}
-
-/**
- * txt content-type
- * @param id
- */
-
-export function txtContentType(id) {
-  return request({
-    url: '/txtPreview/txtContentType',
     method: 'get',
     id
   });

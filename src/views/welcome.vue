@@ -54,7 +54,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="formVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="saveSubmit" :loading="submitLoading">提交</el-button>
+        <el-button type="primary" @click.native="saveSubmit('formData')" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>
 
@@ -121,38 +121,48 @@
       goToDetail(index, item) {
         this.$router.push({path: '/customerDetail', query: {id: item.id, name: item.name}});
       },
-      saveSubmit() {
-        this.$confirm('确认提交吗？', '提示', {}).then(() => {
-          this.submitLoading = true;
-          let customer = {
-            name: this.formData.name,
-            function: this.formData.function,
-            publishDate: this.formData.publishDate,
-            longitudeLatitude: this.formData.longitudeLatitude,
-            website: this.formData.website,
-            address: this.formData.address,
-            comment: this.formData.comment,
-            managerId: -1,
-          };
-          add(customer).then(res => {
-            this.submitLoading = false;
-            if (res.data.code == 0) {
-              this.formVisible = false;
-              this.getList(); //重新加载数据
-              this.$message({
-                message: '添加成功！',
-                type: 'success'
+      saveSubmit(formData) {
+        this.$refs[formData].validate((valid) => {
+          if (valid) {
+            this.$confirm('确认提交吗？', '提示', {}).then(() => {
+              this.submitLoading = true;
+              let customer = {
+                name: this.formData.name,
+                function: this.formData.function,
+                publishDate: this.formData.publishDate,
+                longitudeLatitude: this.formData.longitudeLatitude,
+                website: this.formData.website,
+                address: this.formData.address,
+                comment: this.formData.comment,
+                managerId: -1,
+              };
+              add(customer).then(res => {
+                this.submitLoading = false;
+                if (res.data.code == 0) {
+                  this.formVisible = false;
+                  this.getList(); //重新加载数据
+                  this.$message({
+                    message: '添加成功！',
+                    type: 'success'
+                  });
+                } else {
+                  this.$message({
+                    message: '添加失败！',
+                    type: 'error'
+                  });
+                }
+              }).catch((error) => {
+                this.submitLoading = false;
+                if (error) console.log(error);
               });
-            } else {
-              this.$message({
-                message: '添加失败！',
-                type: 'error'
-              });
-            }
-          }).catch((error) => {
-            this.submitLoading = false;
-            if (error) console.log(error);
-          });
+            });
+          } else {
+            this.$message({
+              message: '信息未填写完整！',
+              type: 'error'
+            });
+            return false;
+          }
         });
       },
       getList() {
@@ -168,10 +178,10 @@
     mounted() {
       this.getList();
     },
-   beforeRouteLeave(to, from, next) {
+    beforeRouteLeave(to, from, next) {
       this.$destroy();
       next();
-  },
+    },
   }
 </script>
 

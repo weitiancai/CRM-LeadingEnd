@@ -123,7 +123,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="formVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="saveSubmit" :loading="submitLoading">提交</el-button>
+        <el-button type="primary" @click.native="saveSubmit('formData')" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>
 
@@ -279,7 +279,7 @@
           name: '',
           version: '',
           config: '',
-          status: '',
+          status: 1,
           deployDate: '',
           stage: undefined,
           comment: '',
@@ -347,76 +347,86 @@
         this.formVisibleHard = true;
         this.getHardwareList();
       },
-      saveSubmit() {
-        this.$confirm('确认提交吗？', '提示', {}).then(() => {
-          this.submitLoading = true;
-          if (this.action == 'add') {
-            let software = {
-              type: this.formData.type,
-              company: this.formData.company,
-              name: this.formData.name,
-              version: this.formData.version,
-              config: this.formData.config,
-              status: this.formData.status,
-              deployDate: this.formData.deployDate,
-              stage: this.formData.stage,
-              comment: this.formData.comment,
-              customerId: this.id,
-              hardwareId: this.formData.hardwareId,
-            };
-            add(software).then(res => {
-              this.submitLoading = false;
-              if (res.data.code == 0) {
-                this.formVisible = false;
-                this.getList(); //重新加载数据
-                this.$message({
-                  message: '添加成功！',
-                  type: 'success'
+      saveSubmit(formData) {
+        this.$refs[formData].validate((valid) => {
+          if (valid) {
+            this.$confirm('确认提交吗？', '提示', {}).then(() => {
+              this.submitLoading = true;
+              if (this.action == 'add') {
+                let software = {
+                  type: this.formData.type,
+                  company: this.formData.company,
+                  name: this.formData.name,
+                  version: this.formData.version,
+                  config: this.formData.config,
+                  status: this.formData.status,
+                  deployDate: this.formData.deployDate,
+                  stage: this.formData.stage,
+                  comment: this.formData.comment,
+                  customerId: this.id,
+                  hardwareId: this.formData.hardwareId,
+                };
+                add(software).then(res => {
+                  this.submitLoading = false;
+                  if (res.data.code == 0) {
+                    this.formVisible = false;
+                    this.getList(); //重新加载数据
+                    this.$message({
+                      message: '添加成功！',
+                      type: 'success'
+                    });
+                  } else {
+                    this.$message({
+                      message: '添加失败！',
+                      type: 'error'
+                    });
+                  }
+                }).catch((error) => {
+                  this.submitLoading = false;
+                  if (error) console.log(error);
                 });
               } else {
-                this.$message({
-                  message: '添加失败！',
-                  type: 'error'
+                let software = {
+                  type: this.formData.type,
+                  company: this.formData.company,
+                  name: this.formData.name,
+                  version: this.formData.version,
+                  config: this.formData.config,
+                  status: this.formData.status,
+                  deployDate: this.formData.deployDate,
+                  stage: this.formData.stage,
+                  comment: this.formData.comment,
+                  customerId: this.id,
+                  hardwareId: this.formData.hardwareId,
+                  id: this.softwareId,
+                };
+                update(software).then(res => {
+                  this.submitLoading = false;
+                  if (res.data.code == 0) {
+                    this.formVisible = false;
+                    this.getList(); //重新加载数据
+                    this.$message({
+                      message: '编辑成功！',
+                      type: 'success'
+                    });
+                  } else {
+                    this.$message({
+                      message: '编辑失败！',
+                      type: 'error'
+                    });
+                  }
+                }).catch((error) => {
+                  this.submitLoading = false;
+                  if (error) console.log(error);
                 });
               }
-            }).catch((error) => {
-              this.submitLoading = false;
-              if (error) console.log(error);
             });
           } else {
-            let software = {
-              type: this.formData.type,
-              company: this.formData.company,
-              name: this.formData.name,
-              version: this.formData.version,
-              config: this.formData.config,
-              status: this.formData.status,
-              deployDate: this.formData.deployDate,
-              stage: this.formData.stage,
-              comment: this.formData.comment,
-              customerId: this.id,
-              hardwareId: this.formData.hardwareId,
-              id: this.softwareId,
-            };
-            update(software).then(res => {
-              this.submitLoading = false;
-              if (res.data.code == 0) {
-                this.formVisible = false;
-                this.getList(); //重新加载数据
-                this.$message({
-                  message: '编辑成功！',
-                  type: 'success'
-                });
-              } else {
-                this.$message({
-                  message: '编辑失败！',
-                  type: 'error'
-                });
-              }
-            }).catch((error) => {
-              this.submitLoading = false;
-              if (error) console.log(error);
+            this.$message({
+              message: '信息未填写完整！',
+              type: 'error'
             });
+            return false;
           }
         });
       },
@@ -482,7 +492,7 @@
           name: '',
           version: '',
           config: '',
-          status: '',
+          status: 1,
           deployDate: '',
           stage: undefined,
           comment: '',
@@ -547,6 +557,10 @@
         const typeMap = {
           1: '服务器',
           2: '密码卡',
+          3:'交换机',
+          4:'网关',
+          5:'硬件令牌',
+          6:'USBKey'
         }
         return typeMap[type]
       },

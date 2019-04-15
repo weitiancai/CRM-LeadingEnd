@@ -77,6 +77,10 @@
           <el-select v-model="formData.type" placeholder="请选择硬件类型">
             <el-option label="服务器" :value=1></el-option>
             <el-option label="密码卡" :value=2></el-option>
+            <el-option label="交换机" :value=3></el-option>
+            <el-option label="网关" :value=4></el-option>
+            <el-option label="硬件令牌" :value=5></el-option>
+            <el-option label="USBKey" :value=6></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="厂商" prop="company">
@@ -96,7 +100,7 @@
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-select v-model="formData.status" placeholder="请选择状态">
-            <el-option label="有效" :value=1></el-option>
+            <el-option label="有效" :value=1 ></el-option>
             <el-option label="无效" :value=0></el-option>
           </el-select>
         </el-form-item>
@@ -116,7 +120,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="formVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="saveSubmit" :loading="submitLoading">提交</el-button>
+        <el-button type="primary" @click.native="saveSubmit('formData')" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>
 
@@ -183,7 +187,7 @@
           model: '',
           sn: '',
           config: '',
-          status: '',
+          status: 1,
           deployDate: '',
           stage: undefined,
           comment: '',
@@ -275,76 +279,86 @@
           }
         });
       },
-      saveSubmit() {
-        this.$confirm('确认提交吗？', '提示', {}).then(() => {
-          this.submitLoading = true;
-          if (this.action == 'add') {
-            let hardware = {
-              type: this.formData.type,
-              company: this.formData.company,
-              brand: this.formData.brand,
-              model: this.formData.model,
-              sn: this.formData.sn,
-              config: this.formData.config,
-              status: this.formData.status,
-              deployDate: this.formData.deployDate,
-              stage: this.formData.stage,
-              comment: this.formData.comment,
-              customerId: this.id,
-            };
-            add(hardware).then(res => {
-              this.submitLoading = false;
-              if (res.data.code == 0) {
-                this.formVisible = false;
-                this.getList(); //重新加载数据
-                this.$message({
-                  message: '添加成功！',
-                  type: 'success'
+      saveSubmit(formData) {
+        this.$refs[formData].validate((valid) => {
+          if (valid) {
+            this.$confirm('确认提交吗？', '提示', {}).then(() => {
+              this.submitLoading = true;
+              if (this.action == 'add') {
+                let hardware = {
+                  type: this.formData.type,
+                  company: this.formData.company,
+                  brand: this.formData.brand,
+                  model: this.formData.model,
+                  sn: this.formData.sn,
+                  config: this.formData.config,
+                  status: this.formData.status,
+                  deployDate: this.formData.deployDate,
+                  stage: this.formData.stage,
+                  comment: this.formData.comment,
+                  customerId: this.id,
+                };
+                add(hardware).then(res => {
+                  this.submitLoading = false;
+                  if (res.data.code == 0) {
+                    this.formVisible = false;
+                    this.getList(); //重新加载数据
+                    this.$message({
+                      message: '添加成功！',
+                      type: 'success'
+                    });
+                  } else {
+                    this.$message({
+                      message: '添加失败！',
+                      type: 'error'
+                    });
+                  }
+                }).catch((error) => {
+                  this.submitLoading = false;
+                  if (error) console.log(error);
                 });
               } else {
-                this.$message({
-                  message: '添加失败！',
-                  type: 'error'
+                let hardware = {
+                  type: this.formData.type,
+                  company: this.formData.company,
+                  brand: this.formData.brand,
+                  model: this.formData.model,
+                  sn: this.formData.sn,
+                  config: this.formData.config,
+                  status: this.formData.status,
+                  deployDate: this.formData.deployDate,
+                  stage: this.formData.stage,
+                  comment: this.formData.comment,
+                  customerId: this.id,
+                  id: this.hardwareId,
+                };
+                update(hardware).then(res => {
+                  this.submitLoading = false;
+                  if (res.data.code == 0) {
+                    this.formVisible = false;
+                    this.getList(); //重新加载数据
+                    this.$message({
+                      message: '编辑成功！',
+                      type: 'success'
+                    });
+                  } else {
+                    this.$message({
+                      message: '编辑失败！',
+                      type: 'error'
+                    });
+                  }
+                }).catch((error) => {
+                  this.submitLoading = false;
+                  if (error) console.log(error);
                 });
               }
-            }).catch((error) => {
-              this.submitLoading = false;
-              if (error) console.log(error);
             });
           } else {
-            let hardware = {
-              type: this.formData.type,
-              company: this.formData.company,
-              brand: this.formData.brand,
-              model: this.formData.model,
-              sn: this.formData.sn,
-              config: this.formData.config,
-              status: this.formData.status,
-              deployDate: this.formData.deployDate,
-              stage: this.formData.stage,
-              comment: this.formData.comment,
-              customerId: this.id,
-              id: this.hardwareId,
-            };
-            update(hardware).then(res => {
-              this.submitLoading = false;
-              if (res.data.code == 0) {
-                this.formVisible = false;
-                this.getList(); //重新加载数据
-                this.$message({
-                  message: '编辑成功！',
-                  type: 'success'
-                });
-              } else {
-                this.$message({
-                  message: '编辑失败！',
-                  type: 'error'
-                });
-              }
-            }).catch((error) => {
-              this.submitLoading = false;
-              if (error) console.log(error);
+            this.$message({
+              message: '信息未填写完整！',
+              type: 'error'
             });
+            return false;
           }
         });
       },
@@ -359,7 +373,7 @@
           model: '',
           sn: '',
           config: '',
-          status: '',
+          status: 1,
           deployDate: '',
           stage: undefined,
           comment: '',
@@ -405,6 +419,10 @@
         const typeMap = {
           1: '服务器',
           2: '密码卡',
+          3:'交换机',
+          4:'网关',
+          5:'硬件令牌',
+          6:'USBKey'
         }
         return typeMap[type]
       },
