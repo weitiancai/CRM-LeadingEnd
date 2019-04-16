@@ -4,6 +4,7 @@
       <Header style="background-color: #a7ede2">
         <div class="layout-logo">{{sysName}}</div>
         <div class="layout-nav">
+          <i-button type="info" style="color: #fff;float: right;margin-top: 15px" @click="logout()">退出</i-button>
         </div>
       </Header>
       <Content :style="{padding: '0 50px'}">
@@ -33,6 +34,13 @@
     },
     components: {
       Breadcrumb
+    },
+    methods:{
+      logout() {
+        this.$store.dispatch('LogOut').then(() => {
+          location.reload() // 为了重新实例化vue-router对象 避免bug
+        })
+      },
     }
   }
 </script>

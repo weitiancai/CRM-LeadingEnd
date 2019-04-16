@@ -12,12 +12,11 @@
     <el-main>
       <el-row v-for="(item,index) in customerList" :id="index" :key="item.id" class="rMain">
         <div class="cIndex">
-          <p class="pIndex">{{index+1}}</p>
+          <p class="pIndex" style="padding-bottom: 1vh">{{index+1}}</p>
         </div>
         <div class="cMain" @click="goToDetail(index,item)">
-          <p>{{item.name}}</p>
-          <p>{{item.function}}</p>
-          <p style="float:right;margin-top: -3vh">{{item.publishDate}}</p>
+          <p><b>{{item.name}}</b></p>
+          <span>{{item.function}}<span style="float: right">{{item.publishDate}}</span></span>
         </div>
       </el-row>
     </el-main>
@@ -198,7 +197,6 @@
 
   .cIndex {
     width: 3vw;
-    height: 9vh;
     background-color: #a7ede2;
     margin-right: 2vh;
     float: left;
@@ -207,8 +205,11 @@
   .cMain {
     background-color: #a7ede2;
     width: 80vw;
-    height: 9vh;
     float: left;
+  }
+
+  .cMain :hover{
+    cursor:pointer;
   }
 
   .rMain {

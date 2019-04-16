@@ -6,10 +6,7 @@ const user = {
         id:'',
         token: getToken(),
         name: '',
-        realName:'',
         roles: [],
-        studentId:'',
-        teacherId:''
     },
 
     mutations: {
@@ -22,30 +19,21 @@ const user = {
         SET_NAME: (state, name) => {
             state.name = name
         },
-        SET_REALNAME: (state, realName) => {
-            state.realName = realName
-        },
         SET_ROLES: (state, roles) => {
             state.roles = roles
-        },
-        SET_STUDENTID: (state, studentId) => {
-            state.studentId = studentId
-        },
-        SET_TEACHERID: (state, teacherId) => {
-            state.teacherId = teacherId
         },
     },
 
     actions: {
         // 登录
         Login({ commit }, userInfo) {
+          console.log(userInfo)
             //userInfo.username = userInfo.username.trim();
             return new Promise((resolve, reject) => {
                 login(userInfo).then(response => {
                     const data = response.data;
                     setToken(data.token);
                     commit('SET_TOKEN', data.token);
-
                     resolve(response)
                 }).catch(error => {
                     reject(error)
@@ -58,25 +46,9 @@ const user = {
             return new Promise((resolve, reject) => {
                 getInfo().then(response => {
                     const data=response.data;
-                    let roles = ['anon'];
-                    if (data.user.usertype === 1) {
-                      roles = ['teacher'];
-                        commit('SET_TEACHERID', data.user.teacherInfo.id);
-                    }
-                    else if (data.user.usertype === 2) {
-                      roles = ['student'];
-                        commit('SET_STUDENTID', data.user.studentInfo.id);
-                    }
-                    else if (data.user.usertype === 5) {
-                      roles = ['system'];
-                    }
-                    response.roles = roles;
                     commit('SET_ID', data.user.id);
-                    commit('SET_ROLES', roles);
-
-
+                    commit('SET_ROLES',data.roles);
                     commit('SET_NAME', data.user.username);
-                    commit('SET_REALNAME', data.user.realname);
                     resolve(response);
                 }).catch(error => {
                     reject(error)

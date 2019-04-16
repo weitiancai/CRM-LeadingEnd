@@ -4,6 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import Layout from './components/Layout/Layout'
+import store from './store'
+import '@/permission' // permission control
 
 import iView from 'iview';
 import ElementUI from 'element-ui';
@@ -30,6 +32,7 @@ Object.keys(filters).forEach(key => {
 new Vue({
   el: '#app',
   router,
+  store,
   components: {Layout},
   template: '<Layout/>',
   render: h => h(App)

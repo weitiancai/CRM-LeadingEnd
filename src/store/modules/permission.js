@@ -46,7 +46,7 @@ const permission = {
     actions: {
         GenerateRoutes({ commit }, data) {
             return new Promise(resolve => {
-                const { userType, roles } = data;
+                const { roles } = data;
                 let accessedRouters;
                 // if (roles.indexOf('admin') >= 0) {
               //accessedRouters = asyncRouterMap;

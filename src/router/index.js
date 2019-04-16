@@ -2,14 +2,26 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '../components/Layout/Layout'
 
-Vue.use(Router)
+Vue.use(Router);
+export const constantRouterMap = [
+  {path: '/', redirect: '/login', hidden: true},
+  {path: '/login', component: () => import('@/views/login'), hidden: true},
+];
 
 export default new Router({
-  routes: [
+  scrollBehavior: () => ({y: 0}),
+  routes: constantRouterMap
+})
+
+export const asyncRouterMap =[
     {
-      path: '/',
+      path: '/CRM',
       component: Layout,
       redirect: '/home',
+      name:'CRM',
+      meta:{
+        roles:['CRM'],
+      },
       children: [
         {
           path: '/home',
@@ -17,6 +29,7 @@ export default new Router({
           component: () => import('@/views/welcome'),
           meta: {
             title: '首页',
+            roles:['CRM'],
           }
         }, {
           path: '/customerDetail',
@@ -24,6 +37,7 @@ export default new Router({
           component: () => import('@/views/customerDetail'),
           meta: {
             title: '客户详情',
+            roles:['CRM'],
           }
         }, {
           path: '/hardware',
@@ -31,6 +45,7 @@ export default new Router({
           component: () => import('@/views/hardware'),
           meta: {
             title: '硬件',
+            roles:['CRM'],
           }
         }, {
           path: '/software',
@@ -38,6 +53,7 @@ export default new Router({
           component: () => import('@/views/software'),
           meta: {
             title: '软件',
+            roles:['CRM'],
           }
         }, {
           path: '/document',
@@ -45,6 +61,7 @@ export default new Router({
           component: () => import('@/views/document'),
           meta: {
             title: '文件',
+            roles:['CRM'],
           }
         }, {
           path: '/infoDetail',
@@ -52,6 +69,7 @@ export default new Router({
           component: () => import('@/views/infoDetail'),
           meta: {
             title: '详细信息',
+            roles:['CRM'],
           }
         },
         {
@@ -60,9 +78,9 @@ export default new Router({
           component: () => import('@/views/previewFile'),
           meta: {
             title: '预览文件',
+            roles:['CRM'],
           }
         },
       ]
     },
-  ]
-})
+  ];
