@@ -141,7 +141,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.native="formVisibleson = false">取消</el-button>
+        <el-button @click.native="formVisibleroot = false">取消</el-button>
         <el-button type="primary" v-on:click="addroot" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>
@@ -174,7 +174,7 @@
    <el-dialog :title="formTitle" :visible.sync="formVisibleupdatefileinfo" :close-on-click-modal="false">
       <el-form :model="updateData" label-width="auto" :rules="formRules" ref="updateData">
         <el-form-item label="为更新文件添加简介" prop="comment">
-          <el-input  v-model="updateData.comment" @keyup.enter.native="updatefi"></el-input>
+          <el-input  v-model="updateData.comment" @keyup.enter.native=""></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -187,7 +187,7 @@
                          :before-upload="beupdatefile"
                    style="float:right;margin-left:1%"
                        >
-          <el-button type="primary" size="small"  v-on:click="updatefi" :loading="submitLoading">提交</el-button>
+          <el-button type="primary" size="small"  :loading="submitLoading">提交</el-button>
         </el-upload>
         <el-button size="small" @click.native="formVisibleupdatefileinfo = false" >取消</el-button>
       </div>
@@ -196,11 +196,10 @@
     <el-dialog :title="formTitle" :visible.sync="formVisiblefileinfo" :close-on-click-modal="false">
       <el-form :model="ufile" label-width="auto" :rules="formRules" ref="ufile">
         <el-form-item label="为上传文件添加简介" prop="comment">
-          <el-input  v-model="ufile.comment" @keyup.enter.native="fileinfo"></el-input>
+          <el-input  v-model="ufile.comment" ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-
         <el-upload
           name="file"
           :on-success="onSuccess"
@@ -214,7 +213,7 @@
           :show-file-list="false"
           style="float:right;margin-left:1%"
         >
-          <el-button type="primary" size="small"  v-on:click="fileinfo" :loading="submitLoading">提交</el-button>
+          <el-button type="primary" size="small"  :loading="submitLoading">提交</el-button>
         </el-upload>
         <el-button size="small" @click.native="formVisiblefileinfo = false" >取消</el-button>
       </div>
@@ -260,6 +259,7 @@
 <script>
   import {getTreeById,getDocumentChildren,getDocumentChildrens,addDirectory,deleteDirectoryById} from '../api/document'
   import { update,download,updatefile,uploadDocument,deleteDocument} from '../api/document'
+  import '../store/getters.js'
 
   export default {
     data() {
@@ -372,7 +372,7 @@
           this.treechildList=res.data.data;
 
           this.typeselect=res.data.data;
-          for(let i=0;i<this.typeselect.length;i++)
+         /* for(let i=0;i<this.typeselect.length;i++)
           {
             this.typename=this.typeselect[i].name.split(".");
             this.typenamelength=this.typename.length;
@@ -402,7 +402,7 @@
               this.treechildList[i].filetype='null';
             }
           }
-
+*/
         })
       },
       ad(){
@@ -451,8 +451,10 @@
       },
       addfileinfo(){
         this.formVisiblefileinfo=true;
+        this.formTitle='上传文件';
+
       },
-      fileinfo(){
+   /*   fileinfo(){
         updatefile(this.editfileformData).then(res=>{
           if (res.data.code==0) {
             this.getfileList();
@@ -467,7 +469,7 @@
         }).catch(error=>{
           console.log(error);
         });
-      },
+      },*/
       filedown(node,data){
         this.downfilename=data.name;
         download(data.id).then(res=>{
@@ -590,8 +592,7 @@
       handleError:function(){
         console.log("文件更新失败");
       },
-      updatefi(){
-      },
+
       deletedo(command){
         if(command=='a') {
           console.log("adads");
