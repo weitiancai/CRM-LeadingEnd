@@ -75,12 +75,12 @@
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="硬件类型" prop="type">
           <el-select v-model="formData.type" placeholder="请选择硬件类型">
-            <el-option label="服务器" :value=1></el-option>
-            <el-option label="密码卡" :value=2></el-option>
-            <el-option label="交换机" :value=3></el-option>
-            <el-option label="网关" :value=4></el-option>
-            <el-option label="硬件令牌" :value=5></el-option>
-            <el-option label="USBKey" :value=6></el-option>
+            <el-option label="服务器" :value="1"></el-option>
+            <el-option label="密码卡" :value="2"></el-option>
+            <el-option label="交换机" :value="3"></el-option>
+            <el-option label="网关" :value="4"></el-option>
+            <el-option label="硬件令牌" :value="5"></el-option>
+            <el-option label="USBKey" :value="6"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="厂商" prop="company">
@@ -247,7 +247,7 @@
         this.hardwareId = item.id;
       },
       changeStatus(item) {
-        this.$confirm('是否修改该软件状态？', '提示', {
+        this.$confirm('是否修改该硬件状态？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
