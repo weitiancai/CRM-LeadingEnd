@@ -1,27 +1,27 @@
 <template>
   <section>
     <el-main>
-      <el-form :model="formData" label-width="80px">
+      <el-form :model="customerInfo" label-width="80px">
         <el-form-item label="客户名" prop="name">
-          <span>{{formData.name}}</span>
+          <span>{{customerInfo.name}}</span>
         </el-form-item>
         <el-form-item label="产品功能" prop="function">
-          <span>{{formData.function}}</span>
+          <span>{{customerInfo.function}}</span>
         </el-form-item>
         <el-form-item label="上线时间" prop="publishDate">
-          <span>{{formData.publishDate}}</span>
+          <span>{{customerInfo.publishDate}}</span>
         </el-form-item>
         <el-form-item label="地址" prop="address">
-          <span>{{formData.address}}</span>
+          <span>{{customerInfo.address}}</span>
         </el-form-item>
         <el-form-item label="经纬度" prop="longitudeLatitude">
-          <span>{{formData.longitudeLatitude}}</span>
+          <span>{{customerInfo.longitudeLatitude}}</span>
         </el-form-item>
         <el-form-item label="网址" prop="website">
-          <span>{{formData.website}}</span>
+          <span>{{customerInfo.website}}</span>
         </el-form-item>
         <el-form-item label="备注" prop="comment">
-          <span>{{formData.comment}}</span>
+          <span>{{customerInfo.comment}}</span>
         </el-form-item>
       </el-form>
       <el-row>
@@ -60,7 +60,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.native="formVisible = false">取消</el-button>
+        <el-button @click.native="unSumbit">取消</el-button>
         <el-button type="primary" @click.native="saveIt('formData')" :loading="submitLoading">确定</el-button>
       </div>
     </el-dialog>
@@ -91,6 +91,7 @@
           ],
         },
         formData: {},
+        customerInfo:{},
         formVisible: false, //界面是否显示
         formTitle: '', //界面标题
         submitLoading: false,
@@ -99,10 +100,14 @@
       }
     },
     methods: {
+      unSumbit(){
+        this.formVisible=false;
+        this.$refs['formData'].resetFields();
+      },
       getInfo() {
         selectById(this.id).then(res => {
           this.listLoading = false;
-          this.formData = res.data.data;
+          this.customerInfo = res.data.data;
         }).catch((error) => {
           this.listLoading = false;
           if (error) console.log(error);
@@ -112,6 +117,15 @@
         this.action = 'modify';
         this.formVisible=true;
         this.formTitle="修改客户信息";
+        this.formData={
+          name:this.customerInfo.name,
+          function:this.customerInfo.function,
+          publishDate:this.customerInfo.publishDate,
+          address:this.customerInfo.address,
+          longitudeLatitude:this.customerInfo.longitudeLatitude,
+          website:this.customerInfo.website,
+          comment:this.customerInfo.comment,
+        }
       },
       saveIt(formData) {
         this.$refs[formData].validate((valid) => {
@@ -131,6 +145,8 @@
                 }
                 this.formVisible=false;
                 this.submitLoading=false;
+                this.$refs['formData'].resetFields();
+                this.getInfo();
               }).catch((error) => {
                 if (error) console.log(error);
               });

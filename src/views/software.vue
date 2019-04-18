@@ -78,11 +78,11 @@
     <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false">
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="软件类型" prop="type">
-          <el-select v-model="formData.type" placeholder="请选择硬件类型">
-            <el-option label="操作系统" :value=1></el-option>
-            <el-option label="数据库" :value=2></el-option>
-            <el-option label="web服务器" :value=3></el-option>
-            <el-option label="其他" :value=0></el-option>
+          <el-select v-model="formData.type" placeholder="请选择软件类型">
+            <el-option label="操作系统" :value="1"></el-option>
+            <el-option label="数据库" :value="2"></el-option>
+            <el-option label="web服务器" :value="3"></el-option>
+            <el-option label="其他" :value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="厂商" prop="company">
@@ -436,7 +436,7 @@
         this.action = 'modify';
         this.formData = {
           type: item.type,
-          company: item.type,
+          company: item.company,
           name: item.name,
           version: item.version,
           config: item.config,
