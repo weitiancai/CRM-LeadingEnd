@@ -194,7 +194,7 @@
     </el-dialog>
     <!--文件comment介绍-->
     <el-dialog :title="formTitle" :visible.sync="formVisiblefileinfo" :close-on-click-modal="false">
-      <el-form :model="ufile" label-width="auto" :rules="formRules" ref="ufile">
+      <el-form :model="ufile" label-width="auto"  ref="ufile">
         <el-form-item label="为上传文件添加简介" prop="comment">
           <el-input  v-model="ufile.comment" ></el-input>
         </el-form-item>
@@ -521,6 +521,7 @@
       filemore(node,data){
           this.deletedocumentid=data.id;
           this.preFileInfo=data;
+          console.log(data);
       },
       /*知识点树*/
       renderContent(h, { node, data, store }){
@@ -555,11 +556,13 @@
         this.updateData.storageName=this.curstoragename;
       },
       beuploadfile(file){
+
         this.ufile.name=file.name;
         this.ufile.customer_id=this.customerid;
         this.formVisiblefileinfo=true;
       },
       onSuccess: function (response, file) {
+
         this.formVisiblefileinfo = false;
         getDocumentChildren(this.ufile.document_tree_id).then(res=>{
           this.treechildList=res.data.data;
