@@ -6,6 +6,20 @@
         <el-form-item class="form-item">
           <el-button type="primary" @click="showAdd" icon="el-icon-plus">新增客户</el-button>
         </el-form-item>
+        <div style="float: right">
+          <el-form-item class="form-item">
+          <el-input v-model="three.name" placeholder="请输入客户名"></el-input>
+          </el-form-item>
+          <el-form-item class="form-item">
+          <el-input v-model="three.year" placeholder="请输入上线年份"></el-input>
+          </el-form-item>
+          <el-form-item class="form-item">
+          <el-input v-model="three.monthAndDay" placeholder="请输入具体上线时间"></el-input>
+          </el-form-item>
+          <el-form-item class="form-item">
+          <el-button type="primary" @click="findCustomer" icon="el-icon-search">查找</el-button>
+          </el-form-item>
+        </div>
       </el-form>
     </el-col>
     <!--主页面-->
@@ -16,7 +30,7 @@
         </div>
         <div class="cMain" @click="goToDetail(index,item)">
           <p><b>{{item.name}}</b></p>
-          <span>{{item.function}}<span style="float: right">{{item.publishDate}}</span></span>
+          <span style="color: #99a9bf">{{item.function}}<span style="float: right;color: #99a9bf">{{item.publishDate}}</span></span>
         </div>
       </el-row>
     </el-main>
@@ -37,15 +51,16 @@
             format="yyyy 年 MM 月 dd 日"
             value-format="yyyy-MM-dd">
           </el-date-picker>
+          <el-checkbox v-model="isUpLoad" @change="changeRules">未上线</el-checkbox>
         </el-form-item>
         <el-form-item label="地址" prop="address">
           <el-input v-model="formData.address"></el-input>
         </el-form-item>
-        <el-form-item label="经纬度" prop="longitudeLatitude">
-          <el-input v-model="formData.longitudeLatitude"></el-input>
-        </el-form-item>
         <el-form-item label="网址" prop="website">
           <el-input v-model="formData.website"></el-input>
+        </el-form-item>
+        <el-form-item label="经纬度" prop="longitudeLatitude">
+          <el-input v-model="formData.longitudeLatitude"></el-input>
         </el-form-item>
         <el-form-item label="备注" prop="comment">
           <el-input v-model="formData.comment"></el-input>
@@ -61,7 +76,7 @@
 </template>
 
 <script>
-  import {getAll, add} from '../api/welcome'
+  import {getAll, add,customerList} from '../api/welcome'
   import ElMain from "element-ui/packages/main/src/main";
 
   export default {
@@ -89,6 +104,7 @@
             {required: true, message: "请输入地址", trigger: 'blur'}
           ],
         },
+        isUpLoad:false,//是否上线
         formData: {
           name: '',
           function: '',
@@ -100,9 +116,31 @@
           managerId: -1,
         },
 
+        //查找客户
+        three:{
+          name:'',
+          year:'',
+          monthAndDay:'',
+        }
       }
     },
     methods: {
+      findCustomer(){
+        customerList(this.three).then(res => {
+          this.listLoading = false;
+          this.customerList = res.data.data;
+        }).catch((error) => {
+          this.listLoading = false;
+          if (error) console.log(error);
+        });
+      },
+      changeRules(){
+        if(this.isUpLoad===true){
+          this.formRules.publishDate[0].required=false;
+        }else{
+          this.formRules.publishDate[0].required=true;
+        }
+      },
       showAdd() {
         this.formVisible = true;
         this.formTitle = '新增客户';
@@ -116,6 +154,7 @@
           comment: '',
           managerId: -1,
         };
+        this.isUpLoad=false;
       },
       goToDetail(index, item) {
         this.$router.push({path: '/customerDetail', query: {id: item.id, name: item.name}});
@@ -135,6 +174,9 @@
                 comment: this.formData.comment,
                 managerId: -1,
               };
+              if(this.isUpLoad===true){
+                customer.publishDate='未上线';
+              }
               add(customer).then(res => {
                 this.submitLoading = false;
                 if (res.data.code == 0) {

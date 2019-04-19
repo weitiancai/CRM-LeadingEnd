@@ -2,7 +2,7 @@
   <div class="layout">
     <Layout>
       <Header style="background-color: #a7ede2">
-        <div class="layout-logo">{{sysName}}</div>
+        <div class="layout-logo" @click="goHome">{{sysName}}</div>
         <div class="layout-nav">
           <i-button type="info" style="color: #fff;float: right;margin-top: 15px" @click="logout()">退出</i-button>
         </div>
@@ -36,6 +36,9 @@
       Breadcrumb
     },
     methods:{
+      goHome(){
+        this.$router.push({path: '/home'});
+      },
       logout() {
         this.$store.dispatch('LogOut').then(() => {
           location.reload() // 为了重新实例化vue-router对象 避免bug
@@ -66,6 +69,10 @@
     font-size: 22px;
     text-align: center;
     margin-top: -1.5vh;
+  }
+
+  .layout-logo :hover{
+    cursor:pointer;
   }
 
   .layout-nav {

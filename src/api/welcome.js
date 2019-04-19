@@ -22,3 +22,15 @@ export function getAll() {
     method: 'get',
   });
 }
+/**
+ * 添加客户
+ * @param data
+ */
+
+export function customerList(data) {
+  return request({
+    url: '/customer/customerList',
+    method: 'post',
+    data
+  });
+}

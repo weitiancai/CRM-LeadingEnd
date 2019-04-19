@@ -45,6 +45,7 @@
             format="yyyy 年 MM 月 dd 日"
             value-format="yyyy-MM-dd">
           </el-date-picker>
+          <el-checkbox v-model="isUpLoad" @change="changeRules">未上线</el-checkbox>
         </el-form-item>
         <el-form-item label="地址" prop="address">
           <el-input v-model="formData.address"></el-input>
@@ -97,9 +98,17 @@
         submitLoading: false,
         listLoading: false, //是否显示加载动画
         id: '',
+        isUpLoad:false,
       }
     },
     methods: {
+      changeRules(){
+        if(this.isUpLoad===true){
+          this.formRules.publishDate[0].required=false;
+        }else{
+          this.formRules.publishDate[0].required=true;
+        }
+      },
       unSumbit(){
         this.formVisible=false;
         this.$refs['formData'].resetFields();
@@ -118,6 +127,7 @@
         this.formVisible=true;
         this.formTitle="修改客户信息";
         this.formData={
+          id:this.id,
           name:this.customerInfo.name,
           function:this.customerInfo.function,
           publishDate:this.customerInfo.publishDate,
@@ -125,7 +135,12 @@
           longitudeLatitude:this.customerInfo.longitudeLatitude,
           website:this.customerInfo.website,
           comment:this.customerInfo.comment,
+        };
+        if(this.formData.publishDate==="未上线"){
+          this.isUpLoad=true;
+          this.formData.publishDate='';
         }
+        this.changeRules();
       },
       saveIt(formData) {
         this.$refs[formData].validate((valid) => {
@@ -145,6 +160,7 @@
                 }
                 this.formVisible=false;
                 this.submitLoading=false;
+                this.$emit("passName",this.formData.name)
                 this.$refs['formData'].resetFields();
                 this.getInfo();
               }).catch((error) => {
