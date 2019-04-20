@@ -128,7 +128,7 @@
       findCustomer(){
         customerList(this.three).then(res => {
           this.listLoading = false;
-          this.customerList = res.data.data;
+          this.customerList = res.data.page;
         }).catch((error) => {
           this.listLoading = false;
           if (error) console.log(error);
