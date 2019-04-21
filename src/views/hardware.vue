@@ -71,7 +71,7 @@
     </el-main>
 
     <!--添加硬件-->
-    <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false">
+    <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false"  style="margin-top: -8vh">
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="硬件类型" prop="type">
           <el-select v-model="formData.type" placeholder="请选择硬件类型">
