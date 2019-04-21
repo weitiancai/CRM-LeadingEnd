@@ -15,8 +15,10 @@
           <p class="pIndex" style="padding-bottom: 1vh">{{index+1}}</p>
         </div>
         <div class="cMain" @click="goToDetail(index,item)">
+          <div class="cMain-list">
           <p><b>{{item.name}}</b></p>
           <span>{{item.function}}<span style="float: right">{{item.publishDate}}</span></span>
+          </div>
         </div>
       </el-row>
     </el-main>
@@ -207,8 +209,11 @@
     width: 80vw;
     float: left;
   }
+  .cMain-list{
+    margin: 1vw;
+  }
 
-  .cMain :hover{
+  .cMain:hover{
     cursor:pointer;
   }
 
@@ -224,4 +229,6 @@
   p {
     font-size: large;
   }
+
+
 </style>
