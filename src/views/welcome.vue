@@ -11,13 +11,15 @@
           <el-input v-model="three.name" placeholder="请输入客户名"></el-input>
           </el-form-item>
           <el-form-item class="form-item">
-          <el-input v-model="three.year" placeholder="请输入上线年份"></el-input>
+            <el-date-picker
+              v-model="three.year"
+              type="year"
+              style="width:9vw"
+              placeholder="选择年">
+            </el-date-picker>
           </el-form-item>
           <el-form-item class="form-item">
-          <el-input v-model="three.monthAndDay" placeholder="请输入具体上线时间"></el-input>
-          </el-form-item>
-          <el-form-item class="form-item">
-          <el-button type="primary" @click="findCustomer" icon="el-icon-search">查找</el-button>
+          <el-button type="primary" @click="findCustomer" icon="el-icon-search">筛选</el-button>
           </el-form-item>
         </div>
       </el-form>
@@ -31,9 +33,8 @@
         <div class="cMain" @click="goToDetail(index,item)">
           <div class="cMain-list">
           <p><b>{{item.name}}</b></p>
-          <span>{{item.function}}<span style="float: right">{{item.publishDate}}</span></span>
-          </div>
           <span style="color: #99a9bf">{{item.function}}<span style="float: right;color: #99a9bf">{{item.publishDate}}</span></span>
+          </div>
         </div>
       </el-row>
     </el-main>
@@ -253,7 +254,7 @@
     float: left;
   }
   .cMain-list{
-    margin: 1vw;
+    margin: 1vh 1vw;
   }
 
   .cMain:hover{
