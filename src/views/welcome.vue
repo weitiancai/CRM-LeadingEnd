@@ -11,12 +11,7 @@
           <el-input v-model="three.name" placeholder="请输入客户名"></el-input>
           </el-form-item>
           <el-form-item class="form-item">
-            <el-date-picker
-              v-model="three.year"
-              type="year"
-              style="width:9vw"
-              placeholder="选择年">
-            </el-date-picker>
+            <el-input v-model="three.year" placeholder="上线年份" style="width: 8vw"></el-input>
           </el-form-item>
           <el-form-item class="form-item">
           <el-button type="primary" @click="findCustomer" icon="el-icon-search">筛选</el-button>
@@ -37,6 +32,7 @@
           </div>
         </div>
       </el-row>
+
     </el-main>
     <!--添加客户-->
     <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false">
@@ -92,6 +88,8 @@
         listLoading: false, //是否显示加载动画
         submitLoading: false,
 
+
+
         formVisible: false, //界面是否显示
         formTitle: '', //界面标题
         formRules: {
@@ -125,7 +123,7 @@
           name:'',
           year:'',
           monthAndDay:'',
-        }
+        },
       }
     },
     methods: {
@@ -227,6 +225,7 @@
       this.$destroy();
       next();
     },
+
   }
 </script>
 
