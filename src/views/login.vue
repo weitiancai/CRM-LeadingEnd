@@ -3,11 +3,12 @@
            class="demo-ruleForm login-container">
     <h2 class="title">用户登录</h2>
     <el-form-item prop="username">
-      <el-input type="text" v-model="formData.username"  prefix-icon="fa fa-user"  auto-complete="on" placeholder="账号"></el-input>
+      <el-input type="text" v-model="formData.username"  prefix-icon="fa fa-user"  auto-complete="on" placeholder="账号" @keyup.enter.native="handleLogin"></el-input>
     </el-form-item>
     <el-form-item prop="password">
-      <el-input :type="pwdType" v-model="formData.password" prefix-icon="fa fa-lock" auto-complete="off" placeholder="密码"></el-input>
+      <el-input :type="pwdType" v-model="formData.password" prefix-icon="fa fa-lock" auto-complete="off" placeholder="密码" @keyup.enter.native="handleLogin"></el-input>
       <span class="show-pwd" @click="showPwd"><i class="fa fa-eye" aria-hidden="true"></i></span>
+
     </el-form-item>
     <el-form-item style="width:100%;">
       <el-button type="primary" style="width:100%;" @click.native.prevent="handleLogin" :loading="loginLoading">登录
@@ -53,29 +54,20 @@
         },
         handleLogin() {
           this.$refs.formData.validate(valid => {
+            console.log(valid);
+            console.log("122121");
             if (valid) {
               this.loginLoading = true;
               this.$store.dispatch('Login', this.formData).then(response => {
-                if (response.data.code == 0) {
-                  this.$message({
-                    message: '登录成功！',
-                    type: 'success'
-                  });
-                  this.loginLoading = false;
-                  this.$router.push({path: '/home'});
-                }
-                else{
-                  this.$message({
-                    message: response.data.msg,
-                    type: 'error'
-                  });
-                  this.loginLoading = false;
-                }
+                this.loginLoading = false;
+                this.$router.push({path: '/home'});
+                console.log(response);
+                console.log('11111');
               }).catch(() => {
                 this.loginLoading = false
               })
             } else {
-              this.$message.error('登录信息错误，请重新填写！');
+              console.log('登录信息错误，请重新填写！');
               return false
             }
           });
