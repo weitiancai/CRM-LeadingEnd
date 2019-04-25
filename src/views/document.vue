@@ -26,6 +26,7 @@
           :props="defaultProps"
           empty-text=" "
           style="width: 100%;"
+          v-show="upshow"
         >
           <el-table-column
             prop="name"
@@ -93,7 +94,7 @@
                 plain
                 @click="fileupdate(scope.$index, scope.row)"
                 style="margin-left: -1px">更新</el-button>
-              <el-dropdown  @command="deletedo">
+              <el-dropdown  @command="deletedo" trigger="click">
                 <el-button
                   size="mini"
                   type="info"
@@ -195,6 +196,7 @@
             :before-upload="beuploadfile"
             v-show="upshow"
             style="float:left;margin-left:1%"
+            :auto-upload="false"
           >
            <el-button  type="primary" plain  :loading="submitLoading">文件上传</el-button>
           </el-upload>
@@ -413,40 +415,9 @@
         });
       },
       getfileList(){
-        getDocumentChildren(this.fileId).then(res=>{
+        getDocumentChildren(this.checknum).then(res=>{
           this.treechildList=res.data.data;
-          this.typeselect=res.data.data;
-         /* for(let i=0;i<this.typeselect.length;i++)
-          {
-            this.typename=this.typeselect[i].name.split(".");
-            this.typenamelength=this.typename.length;
-            this.filename=this.typename[this.typenamelength-1];
-            if(this.filename==='txt')
-            {
-              this.treechildList[i].filetype='txt';
-            }
-            else if(this.filename==='doc'||this.filename==='docx')
-            {
-              this.treechildList[i].filetype='word';
-            }
-            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
-            {
-              this.treechildList[i].filetype='excel';
-            }
-            else if(this.filename==='pdf')
-            {
-              this.treechildList[i].filetype='pdf';
-            }
-            else if(this.filename==='ppt'||this.filename==='pptx')
-            {
-              this.treechildList[i].filetype='ppt';
-            }
-            else
-            {
-              this.treechildList[i].filetype='null';
-            }
-          }
-*/
+           console.log(res);
         })
       },
       ad(){
@@ -496,7 +467,7 @@
       addfileinfo(){
         this.formVisiblefileinfo=true;
         this.formTitle='上传文件';
-
+        this.ufile.comment="";
       },
    /*   fileinfo(){
         updatefile(this.editfileformData).then(res=>{
@@ -598,9 +569,6 @@
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
         })
-        getDocumentChildrens(this.childid).then(res=>{
-          this.treesonList=res.data.data;
-        })
       },
       deletehandleNodeClick(data){
         this.upshow=true;
@@ -624,8 +592,6 @@
         this.formVisiblefileinfo=true;
       },
       onSuccess: function (response, file) {
-        //this.formVisiblefileinfo = false;
-        this.checknum=1;
         this.$message({
           message: '上传文件成功！',
           type: 'success'
@@ -635,19 +601,15 @@
         this.$message.error('上传文件失败！');
       },
       checkupload(){
-        if(this.checknum===1)
-        {
+          this.$refs.upload.submit();
           this.formVisiblefileinfo = false;
-          getDocumentChildren(this.ufile.document_tree_id).then(res=>{
-            this.treechildList=res.data.data;
-            this.typeselect=res.data.data;
-            console.log(this.treechildList);
-            console.log("wcaonimalgebi");
-          })
-        }
-        else{
-          alert("文件未上传，不能提交");
-        }
+          console.log(this.ufile);
+          console.log(this.ufile.document_tree_id);
+          this.checknum=this.ufile.document_tree_id;
+          console.log(this.checknum);
+          console.log("this.ufile.document_tree_id");
+           this.getfileList();
+           this.$refs.upload.clearFiles();
       },
       fileupdate( node,data){
         this.curstoragename=data.storageName;
@@ -799,6 +761,9 @@
             });
             this.Visibledel=false;
             this.getList();
+            getDocumentChildren(this.deletevalue).then(res=>{
+              this.treechildList=res.data.data;
+            })
           }
           else {
             this.$message({
