@@ -11,10 +11,10 @@
           <el-input v-model="three.name" placeholder="请输入客户名"></el-input>
           </el-form-item>
           <el-form-item class="form-item">
-          <el-input v-model="three.year" placeholder="请输入上线年份"></el-input>
+            <el-input v-model="three.year" placeholder="上线年份" style="width: 8vw"></el-input>
           </el-form-item>
           <el-form-item class="form-item">
-          <el-button type="primary" @click="findCustomer" icon="el-icon-search">查找</el-button>
+          <el-button type="primary" @click="findCustomer" icon="el-icon-search">筛选</el-button>
           </el-form-item>
         </div>
       </el-form>
@@ -26,10 +26,13 @@
           <p class="pIndex" style="padding-bottom: 1vh">{{index+1}}</p>
         </div>
         <div class="cMain" @click="goToDetail(index,item)">
+          <div class="cMain-list">
           <p><b>{{item.name}}</b></p>
           <span style="color: #99a9bf">{{item.function}}<span style="float: right;color: #99a9bf">{{item.publishDate}}</span></span>
+          </div>
         </div>
       </el-row>
+
     </el-main>
     <!--添加客户-->
     <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false">
@@ -118,7 +121,7 @@
           name:'',
           year:'',
           monthAndDay:'',
-        }
+        },
       }
     },
     methods: {
@@ -246,8 +249,11 @@
     width: 80vw;
     float: left;
   }
+  .cMain-list{
+    margin: 1vh 1vw;
+  }
 
-  .cMain :hover{
+  .cMain:hover{
     cursor:pointer;
   }
 

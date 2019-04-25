@@ -59,7 +59,7 @@
         </el-table-column>
       </el-table>
 
-      <!--工具条-->
+      <!--工具条:分页-->
       <el-col :span="24" class="toolbar">
         <el-pagination layout="total, sizes, prev, pager, next, jumper"
                        @size-change="handleSizeChange"
@@ -143,6 +143,7 @@
         submitLoading: false,
         listLoading: false, //是否显示加载动画
 
+        //分页数据
         total: 0,
         pageIndex: 1, //页码
         pageSize: this.CONSTANT.PAGE_SIZE, //分页大小
@@ -399,7 +400,7 @@
           if (error) console.log(error);
         });
       },
-      //分页
+      //分页函数
       handleSizeChange(val) { //改变分页大小
         this.pageSize = val;
         this.getList();
