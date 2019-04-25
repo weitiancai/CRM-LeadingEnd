@@ -93,6 +93,34 @@ export function getDocumentChildrens(id) {
 }
 
 /**
+ *
+ 根据传入的 directory_id 返回待删除的文件夹内部结构
+ * @param data
+ */
+
+export function getDeleteTreeById(data) {
+  return request({
+    url: '/documenttree/getDeleteTreeById',
+    method: 'post',
+    data
+  });
+}
+
+/**
+ *
+ 根据传入的 directory_id 返回待删除的文件夹内部结构
+ * @param data
+ */
+
+export function getRoot(data) {
+  return request({
+    url: '/documenttree/getRoot/',
+    method: 'post',
+    data
+  });
+}
+
+/**
  * 2、单击文件夹，在右侧显示的子文件夹 列表
  * @param data
  */
