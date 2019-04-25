@@ -26,6 +26,7 @@
           :props="defaultProps"
           empty-text=" "
           style="width: 100%;"
+          v-show="upshow"
         >
           <el-table-column
             prop="name"
@@ -416,37 +417,6 @@
         getDocumentChildren(this.fileId).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
-         /* for(let i=0;i<this.typeselect.length;i++)
-          {
-            this.typename=this.typeselect[i].name.split(".");
-            this.typenamelength=this.typename.length;
-            this.filename=this.typename[this.typenamelength-1];
-            if(this.filename==='txt')
-            {
-              this.treechildList[i].filetype='txt';
-            }
-            else if(this.filename==='doc'||this.filename==='docx')
-            {
-              this.treechildList[i].filetype='word';
-            }
-            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
-            {
-              this.treechildList[i].filetype='excel';
-            }
-            else if(this.filename==='pdf')
-            {
-              this.treechildList[i].filetype='pdf';
-            }
-            else if(this.filename==='ppt'||this.filename==='pptx')
-            {
-              this.treechildList[i].filetype='ppt';
-            }
-            else
-            {
-              this.treechildList[i].filetype='null';
-            }
-          }
-*/
         })
       },
       ad(){
@@ -496,7 +466,7 @@
       addfileinfo(){
         this.formVisiblefileinfo=true;
         this.formTitle='上传文件';
-
+        this.$refs.upload.clearFiles();
       },
    /*   fileinfo(){
         updatefile(this.editfileformData).then(res=>{
@@ -637,13 +607,17 @@
       checkupload(){
         if(this.checknum===1)
         {
+          this.$refs.upload.clearFiles();
+          console.log(this.ufile);
+          console.log("uuuuuuuuuuuuu");
           this.formVisiblefileinfo = false;
           getDocumentChildren(this.ufile.document_tree_id).then(res=>{
             this.treechildList=res.data.data;
             this.typeselect=res.data.data;
-            console.log(this.treechildList);
-            console.log("wcaonimalgebi");
           })
+          this.ufile={};
+          console.log(this.ufile);
+          console.log("ooooo");
         }
         else{
           alert("文件未上传，不能提交");
@@ -799,6 +773,9 @@
             });
             this.Visibledel=false;
             this.getList();
+            getDocumentChildren(this.deletevalue).then(res=>{
+              this.treechildList=res.data.data;
+            })
           }
           else {
             this.$message({
