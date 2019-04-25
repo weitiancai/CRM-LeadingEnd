@@ -14,9 +14,6 @@
           <el-input v-model="three.year" placeholder="请输入上线年份"></el-input>
           </el-form-item>
           <el-form-item class="form-item">
-          <el-input v-model="three.monthAndDay" placeholder="请输入具体上线时间"></el-input>
-          </el-form-item>
-          <el-form-item class="form-item">
           <el-button type="primary" @click="findCustomer" icon="el-icon-search">查找</el-button>
           </el-form-item>
         </div>
