@@ -56,13 +56,26 @@
             if (valid) {
               this.loginLoading = true;
               this.$store.dispatch('Login', this.formData).then(response => {
-                this.loginLoading = false;
-                this.$router.push({path: '/home'});
+                if (response.data.code == 0) {
+                  this.$message({
+                    message: '登录成功！',
+                    type: 'success'
+                  });
+                  this.loginLoading = false;
+                  this.$router.push({path: '/home'});
+                }
+                else{
+                  this.$message({
+                    message: response.data.msg,
+                    type: 'error'
+                  });
+                  this.loginLoading = false;
+                }
               }).catch(() => {
                 this.loginLoading = false
               })
             } else {
-              console.log('登录信息错误，请重新填写！');
+              this.$message.error('登录信息错误，请重新填写！');
               return false
             }
           });
