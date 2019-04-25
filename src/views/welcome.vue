@@ -10,9 +10,11 @@
           <el-form-item class="form-item">
           <el-input v-model="three.name" placeholder="请输入客户名"></el-input>
           </el-form-item>
-          <el-form-item class="form-item">
-            <el-input v-model="three.year" placeholder="上线年份" style="width: 8vw"></el-input>
-          </el-form-item>
+          <!--<el-form-item class="form-item">-->
+            <!--<el-input v-model="two.startyear" placeholder="上线年份" style="width: 8vw"></el-input>-->
+            <!--<span>至</span>-->
+            <!--<el-input v-model="two.endyear" placeholder="可不填" style="width: 8vw"></el-input>-->
+          <!--</el-form-item>-->
           <el-form-item class="form-item">
           <el-button type="primary" @click="findCustomer" icon="el-icon-search">筛选</el-button>
           </el-form-item>
@@ -32,7 +34,6 @@
           </div>
         </div>
       </el-row>
-
     </el-main>
     <!--添加客户-->
     <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false">
@@ -49,8 +50,7 @@
             type="date"
             placeholder="选择日期"
             format="yyyy 年 MM 月 dd 日"
-            value-format="yyyy-MM-dd"
-             @change="changeIsUpLoad">
+            value-format="yyyy-MM-dd">
           </el-date-picker>
           <el-checkbox v-model="isUpLoad" @change="changeRules">未上线</el-checkbox>
         </el-form-item>
@@ -89,6 +89,10 @@
         listLoading: false, //是否显示加载动画
         submitLoading: false,
 
+
+
+
+
         formVisible: false, //界面是否显示
         formTitle: '', //界面标题
         formRules: {
@@ -121,15 +125,15 @@
         three:{
           name:'',
           year:'',
-          monthAndDay:'',
+          duryear:undefined,
         },
+        // two:{
+        //   startyear: '',
+        //   endyear: '',
+        // },
       }
     },
     methods: {
-      changeIsUpLoad(){
-        this.formRules.publishDate[0].required=true;
-        this.isUpLoad=false;
-      },
       findCustomer(){
         customerList(this.three).then(res => {
           this.listLoading = false;
@@ -142,7 +146,6 @@
       changeRules(){
         if(this.isUpLoad===true){
           this.formRules.publishDate[0].required=false;
-          this.formData.publishDate='';
         }else{
           this.formRules.publishDate[0].required=true;
         }
@@ -187,7 +190,7 @@
                 this.submitLoading = false;
                 if (res.data.code == 0) {
                   this.formVisible = false;
-                  this.getList(); //重新加载数据
+                  this.getList();   //重新加载数据
                   this.$message({
                     message: '添加成功！',
                     type: 'success'
@@ -229,6 +232,7 @@
       this.$destroy();
       next();
     },
+
   }
 </script>
 
@@ -275,4 +279,6 @@
   p {
     font-size: large;
   }
+
+
 </style>
