@@ -2,7 +2,11 @@
   <div class="layout">
     <Layout>
       <Header style="background-color: #a7ede2">
+<<<<<<< HEAD
         <div class="layout-logo">{{sysName}}</div>
+=======
+        <div class="layout-logo" @click="goHome">{{sysName}}</div>
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
         <div class="layout-nav">
           <i-button type="info" style="color: #fff;float: right;margin-top: 15px" @click="logout()">退出</i-button>
         </div>
@@ -36,6 +40,12 @@
       Breadcrumb
     },
     methods:{
+<<<<<<< HEAD
+=======
+      goHome(){
+        this.$router.push({path: '/home'});
+      },
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       logout() {
         this.$store.dispatch('LogOut').then(() => {
           location.reload() // 为了重新实例化vue-router对象 避免bug
@@ -68,6 +78,13 @@
     margin-top: -1.5vh;
   }
 
+<<<<<<< HEAD
+=======
+  .layout-logo :hover{
+    cursor:pointer;
+  }
+
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
   .layout-nav {
     width: 420px;
     margin: 0 auto;

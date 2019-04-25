@@ -6,6 +6,20 @@
         <el-form-item class="form-item">
           <el-button type="primary" @click="showAdd" icon="el-icon-plus">新增客户</el-button>
         </el-form-item>
+<<<<<<< HEAD
+=======
+        <div style="float: right">
+          <el-form-item class="form-item">
+          <el-input v-model="three.name" placeholder="请输入客户名"></el-input>
+          </el-form-item>
+          <el-form-item class="form-item">
+            <el-input v-model="three.year" placeholder="上线年份" style="width: 8vw"></el-input>
+          </el-form-item>
+          <el-form-item class="form-item">
+          <el-button type="primary" @click="findCustomer" icon="el-icon-search">筛选</el-button>
+          </el-form-item>
+        </div>
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       </el-form>
     </el-col>
     <!--主页面-->
@@ -15,10 +29,20 @@
           <p class="pIndex" style="padding-bottom: 1vh">{{index+1}}</p>
         </div>
         <div class="cMain" @click="goToDetail(index,item)">
+<<<<<<< HEAD
           <p><b>{{item.name}}</b></p>
           <span>{{item.function}}<span style="float: right">{{item.publishDate}}</span></span>
         </div>
       </el-row>
+=======
+          <div class="cMain-list">
+          <p><b>{{item.name}}</b></p>
+          <span style="color: #99a9bf">{{item.function}}<span style="float: right;color: #99a9bf">{{item.publishDate}}</span></span>
+          </div>
+        </div>
+      </el-row>
+
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
     </el-main>
     <!--添加客户-->
     <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false">
@@ -37,16 +61,29 @@
             format="yyyy 年 MM 月 dd 日"
             value-format="yyyy-MM-dd">
           </el-date-picker>
+<<<<<<< HEAD
+=======
+          <el-checkbox v-model="isUpLoad" @change="changeRules">未上线</el-checkbox>
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
         </el-form-item>
         <el-form-item label="地址" prop="address">
           <el-input v-model="formData.address"></el-input>
         </el-form-item>
+<<<<<<< HEAD
         <el-form-item label="经纬度" prop="longitudeLatitude">
           <el-input v-model="formData.longitudeLatitude"></el-input>
         </el-form-item>
         <el-form-item label="网址" prop="website">
           <el-input v-model="formData.website"></el-input>
         </el-form-item>
+=======
+        <el-form-item label="网址" prop="website">
+          <el-input v-model="formData.website"></el-input>
+        </el-form-item>
+        <el-form-item label="经纬度" prop="longitudeLatitude">
+          <el-input v-model="formData.longitudeLatitude"></el-input>
+        </el-form-item>
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
         <el-form-item label="备注" prop="comment">
           <el-input v-model="formData.comment"></el-input>
         </el-form-item>
@@ -61,7 +98,11 @@
 </template>
 
 <script>
+<<<<<<< HEAD
   import {getAll, add} from '../api/welcome'
+=======
+  import {getAll, add,customerList} from '../api/welcome'
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
   import ElMain from "element-ui/packages/main/src/main";
 
   export default {
@@ -73,6 +114,11 @@
         listLoading: false, //是否显示加载动画
         submitLoading: false,
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
         formVisible: false, //界面是否显示
         formTitle: '', //界面标题
         formRules: {
@@ -89,6 +135,10 @@
             {required: true, message: "请输入地址", trigger: 'blur'}
           ],
         },
+<<<<<<< HEAD
+=======
+        isUpLoad:false,//是否上线
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
         formData: {
           name: '',
           function: '',
@@ -100,9 +150,37 @@
           managerId: -1,
         },
 
+<<<<<<< HEAD
       }
     },
     methods: {
+=======
+        //查找客户
+        three:{
+          name:'',
+          year:'',
+          monthAndDay:'',
+        },
+      }
+    },
+    methods: {
+      findCustomer(){
+        customerList(this.three).then(res => {
+          this.listLoading = false;
+          this.customerList = res.data.page;
+        }).catch((error) => {
+          this.listLoading = false;
+          if (error) console.log(error);
+        });
+      },
+      changeRules(){
+        if(this.isUpLoad===true){
+          this.formRules.publishDate[0].required=false;
+        }else{
+          this.formRules.publishDate[0].required=true;
+        }
+      },
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       showAdd() {
         this.formVisible = true;
         this.formTitle = '新增客户';
@@ -116,6 +194,10 @@
           comment: '',
           managerId: -1,
         };
+<<<<<<< HEAD
+=======
+        this.isUpLoad=false;
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       },
       goToDetail(index, item) {
         this.$router.push({path: '/customerDetail', query: {id: item.id, name: item.name}});
@@ -135,6 +217,12 @@
                 comment: this.formData.comment,
                 managerId: -1,
               };
+<<<<<<< HEAD
+=======
+              if(this.isUpLoad===true){
+                customer.publishDate='未上线';
+              }
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
               add(customer).then(res => {
                 this.submitLoading = false;
                 if (res.data.code == 0) {
@@ -181,6 +269,10 @@
       this.$destroy();
       next();
     },
+<<<<<<< HEAD
+=======
+
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
   }
 </script>
 
@@ -207,8 +299,16 @@
     width: 80vw;
     float: left;
   }
+<<<<<<< HEAD
 
   .cMain :hover{
+=======
+  .cMain-list{
+    margin: 1vh 1vw;
+  }
+
+  .cMain:hover{
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
     cursor:pointer;
   }
 
@@ -224,4 +324,9 @@
   p {
     font-size: large;
   }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 062e872014baad1088c6de7f28c747979cee1545
 </style>
