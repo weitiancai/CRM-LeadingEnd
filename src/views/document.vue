@@ -195,6 +195,7 @@
             :dropdownlist="false"
             :before-upload="beuploadfile"
             v-show="upshow"
+            :on-change="fileChange"
             style="float:left;margin-left:1%"
             :auto-upload="false"
           >
@@ -217,7 +218,7 @@
           style="float:right;margin-left:1%"
         >-->
           <el-button type="primary" size="small"  :loading="submitLoading" @click="checkupload">提交</el-button>
-        <el-button size="small" @click.native="formVisiblefileinfo = false" >取消</el-button>
+        <el-button size="small" @click.native="cancelup" >取消</el-button>
       </div>
     </el-dialog>
     <!--节点添加-->
@@ -258,7 +259,7 @@
 
 
     <!--节点删除-->
-    <el-dialog :title="formTitle" :visible.sync="Visibledel" :close-on-click-modal="false">
+   <!-- <el-dialog :title="formTitle" :visible.sync="Visibledel" :close-on-click-modal="false">
       <p style="color:red;font-size:20px;">该节点下的文件夹</p>
       <el-tree
         :data="deletetreesonList"
@@ -290,7 +291,7 @@
         <el-button @click.native="Visibledel = false">取消</el-button>
         <el-button type="danger" v-on:click="deletesub()" :loading="submitLoading">删除</el-button>
       </div>
-    </el-dialog>
+    </el-dialog>-->
   </section>
 </template>
 
@@ -311,6 +312,7 @@
         updateUrl:'',
         radio:'',
         deletedocumentid:'',
+        utreechildList:[],
         fileList:[],
         treeList:[],
         deletetreechildList:[],
@@ -394,7 +396,7 @@
         submitLoading:false,
         preFileInfo:{},
         name:'',
-        checknum:0,
+        checknum:'',
         userid:'',
         deletevalue:'',
       }
@@ -407,15 +409,13 @@
         getTreeById(this.customerid).then(res => {
           this.listLoading = false;
           this.treeList=res.data.data;
-          console.log(this.treeList);
-          console.log("123123131");
         }).catch((error) => {
           this.listLoading = false;
           if (error) console.log(error);
         });
       },
       getfileList(){
-        getDocumentChildren(this.checknum).then(res=>{
+        getDocumentChildren(this.fileId).then(res=>{
           this.treechildList=res.data.data;
            console.log(res);
         })
@@ -452,7 +452,6 @@
       },
       backfiles(row){
         this.backid=row.id;
-
         getDocumentChildren(this.backid).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
@@ -462,7 +461,6 @@
         });
         this.resourceCheckedKey=this.backid;
         this.getList();
-        console.log(this.resourceCheckedKey);
       },
       addfileinfo(){
         this.formVisiblefileinfo=true;
@@ -536,7 +534,6 @@
       filemore(node,data){
           this.deletedocumentid=data.id;
           this.preFileInfo=data;
-          console.log(data);
       },
       /*知识点树*/
       renderContent(h, { node, data, store }){
@@ -577,9 +574,6 @@
         getDocumentChildren(this.childid).then(res=>{
           this.deletetreechildList=res.data.data;
         })
-      /*  getDocumentChildrens(this.childid).then(res=>{
-          this.deletetreesonList=res.data.data;
-        })*/
       },
       beupdatefile(file){
         this.updateData.storageName=this.curstoragename;
@@ -591,11 +585,14 @@
         this.ufile.customer_id=this.customerid;
         this.formVisiblefileinfo=true;
       },
+
+
       onSuccess: function (response, file) {
         this.$message({
           message: '上传文件成功！',
           type: 'success'
         });
+        this.$refs.upload.clearFiles();
       },
       onError: function () {
         this.$message.error('上传文件失败！');
@@ -603,14 +600,20 @@
       checkupload(){
           this.$refs.upload.submit();
           this.formVisiblefileinfo = false;
-          console.log(this.ufile);
-          console.log(this.ufile.document_tree_id);
           this.checknum=this.ufile.document_tree_id;
-          console.log(this.checknum);
-          console.log("this.ufile.document_tree_id");
-           this.getfileList();
-           this.$refs.upload.clearFiles();
+
       },
+      fileChange(){
+        getDocumentChildren(this.checknum).then(res=>{
+          this.treechildList=res.data.data;
+          this.typeselect=res.data.data;
+        })
+      },
+      cancelup(){
+        this.formVisiblefileinfo = false;
+         this.$refs.upload.submit();
+      },
+
       fileupdate( node,data){
         this.curstoragename=data.storageName;
         this.formVisibleupdatefileinfo=true;
@@ -735,22 +738,46 @@
         this.formTitle="删除文件夹";
         this.deletevalue=data.id;
         this.Visibledel=true;
-        const form1=new FormData();
-        form1.append("directory_id",this.deletevalue);
-        form1.append("customer_id",this.customerid);
-        getRoot(form1).then(res=>{
-          this.deletetreesonList=res.data.data;
-        })
-        getDocumentChildren(this.deletevalue).then(res=>{
-          this.deletetreechildList=res.data.data;
-        })
-       /* const form=new FormData();
+        this.$confirm('此操作将永久删除该节点, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteDirectoryById(this.deletevalue).then(res=> {
+            if(!res.data.code) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              this.Visibledel=false;
+              this.getList();
+              getDocumentChildren(this.deletevalue).then(res=>{
+                this.treechildList=res.data.data;
+              })
+            }
+            else {
+              this.$message({
+                type:'error',
+                message:'删除失败'
+              });
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
 
-        form.append("directory_id",this.deletevalue);
-        getDeleteTreeById(form).then(res=>{
-          console.log(res);
-          this.deletetreesonList=res.data.data;
-        })*/
+
+
+        /* const form=new FormData();
+
+         form.append("directory_id",this.deletevalue);
+         getDeleteTreeById(form).then(res=>{
+           console.log(res);
+           this.deletetreesonList=res.data.data;
+         })*/
       },
       deletesub(){
         deleteDirectoryById(this.deletevalue).then(res=> {
