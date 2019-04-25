@@ -152,6 +152,9 @@
         this.$refs[formData].validate((valid) => {
           if (valid) {
             this.$confirm('确认提交吗？', '提示', {}).then(() => {
+              if(this.isUpLoad===true){
+                this.formData.publishDate='未上线';
+              }
               update(this.formData).then(res => {
                 if (res.data.code == 0) {
                   this.$message({
