@@ -43,10 +43,7 @@
             </el-switch>
           </template>
         </el-table-column>
-        <el-table-column header-align="center" align="center" label="部署日期" min-width="100">
-          <template slot-scope="scope">
-            <span>{{scope.row.deployDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
-          </template>
+        <el-table-column header-align="center" align="center" label="部署日期" min-width="100" prop="deployDate">
         </el-table-column>
         <el-table-column header-align="center" align="center" label="期数" min-width="100" prop="stage"></el-table-column>
         <el-table-column header-align="center" align="center" label="备注" min-width="100"
@@ -106,8 +103,10 @@
         <el-form-item label="部署日期" prop="deployDate">
           <el-date-picker
             v-model="formData.deployDate"
-            type="datetime"
-            placeholder="请选择部署日期">
+            type="date"
+            placeholder="请选择部署日期"
+            format="yyyy 年 MM 月 dd 日"
+            value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="期数" prop="stage">
@@ -188,11 +187,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="部署日期" prop="deployDate">
-          <el-date-picker
-            v-model="formDataHardWare.deployDate"
-            type="datetime"
-            :readonly="true">
-          </el-date-picker>
+          <el-input v-model="formDataHardWare.deployDate" :readonly="true"></el-input>
         </el-form-item>
         <el-form-item label="期数" prop="stage">
           <el-input v-model.number="formDataHardWare.stage" :readonly="true"></el-input>
