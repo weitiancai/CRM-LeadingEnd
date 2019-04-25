@@ -758,7 +758,7 @@
         }
         if(this.wantdeletenum==0&&this.wanttodeletelength==0)
         {
-          this.$confirm('该文件夹为空文件夹,删除将删除该文件夹，是否继续?', '提示', {
+          this.$confirm('确认删除该文件夹吗?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
@@ -790,7 +790,7 @@
           });
         }
         else {
-          this.$confirm('该文件夹下存在文件夹或文档,删除将删除所有文件，是否继续?', '提示', {
+          this.$confirm('该文件夹下的文件夹或文档会被一并删除,请确认是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
