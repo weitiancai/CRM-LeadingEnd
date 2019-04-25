@@ -43,7 +43,8 @@
             type="date"
             placeholder="选择日期"
             format="yyyy 年 MM 月 dd 日"
-            value-format="yyyy-MM-dd">
+            value-format="yyyy-MM-dd"
+            @change="changeIsUpLoad">
           </el-date-picker>
 <<<<<<< HEAD
 =======
@@ -110,9 +111,14 @@
       }
     },
     methods: {
+      changeIsUpLoad(){
+        this.formRules.publishDate[0].required=true;
+        this.isUpLoad=false;
+      },
       changeRules(){
         if(this.isUpLoad===true){
           this.formRules.publishDate[0].required=false;
+          this.formData.publishDate='';
         }else{
           this.formRules.publishDate[0].required=true;
         }
