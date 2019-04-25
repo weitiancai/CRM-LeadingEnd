@@ -94,7 +94,7 @@
                 plain
                 @click="fileupdate(scope.$index, scope.row)"
                 style="margin-left: -1px">更新</el-button>
-              <el-dropdown  @command="deletedo">
+              <el-dropdown  @command="deletedo" trigger="click">
                 <el-button
                   size="mini"
                   type="info"
@@ -196,6 +196,7 @@
             :before-upload="beuploadfile"
             v-show="upshow"
             style="float:left;margin-left:1%"
+            :auto-upload="false"
           >
            <el-button  type="primary" plain  :loading="submitLoading">文件上传</el-button>
           </el-upload>
@@ -414,9 +415,9 @@
         });
       },
       getfileList(){
-        getDocumentChildren(this.fileId).then(res=>{
+        getDocumentChildren(this.checknum).then(res=>{
           this.treechildList=res.data.data;
-          this.typeselect=res.data.data;
+           console.log(res);
         })
       },
       ad(){
@@ -466,7 +467,7 @@
       addfileinfo(){
         this.formVisiblefileinfo=true;
         this.formTitle='上传文件';
-        this.$refs.upload.clearFiles();
+        this.ufile.comment="";
       },
    /*   fileinfo(){
         updatefile(this.editfileformData).then(res=>{
@@ -568,9 +569,6 @@
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
         })
-        getDocumentChildrens(this.childid).then(res=>{
-          this.treesonList=res.data.data;
-        })
       },
       deletehandleNodeClick(data){
         this.upshow=true;
@@ -594,8 +592,6 @@
         this.formVisiblefileinfo=true;
       },
       onSuccess: function (response, file) {
-        //this.formVisiblefileinfo = false;
-        this.checknum=1;
         this.$message({
           message: '上传文件成功！',
           type: 'success'
@@ -605,23 +601,15 @@
         this.$message.error('上传文件失败！');
       },
       checkupload(){
-        if(this.checknum===1)
-        {
-          this.$refs.upload.clearFiles();
-          console.log(this.ufile);
-          console.log("uuuuuuuuuuuuu");
+          this.$refs.upload.submit();
           this.formVisiblefileinfo = false;
-          getDocumentChildren(this.ufile.document_tree_id).then(res=>{
-            this.treechildList=res.data.data;
-            this.typeselect=res.data.data;
-          })
-          this.ufile={};
           console.log(this.ufile);
-          console.log("ooooo");
-        }
-        else{
-          alert("文件未上传，不能提交");
-        }
+          console.log(this.ufile.document_tree_id);
+          this.checknum=this.ufile.document_tree_id;
+          console.log(this.checknum);
+          console.log("this.ufile.document_tree_id");
+           this.getfileList();
+           this.$refs.upload.clearFiles();
       },
       fileupdate( node,data){
         this.curstoragename=data.storageName;
