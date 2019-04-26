@@ -402,6 +402,7 @@
         wanttodeleteList:[],
         wanttodeletelength:'',
         wantdeletenum:'',
+        cnum:0,
       }
     },
 
@@ -420,7 +421,6 @@
       getfileList(){
         getDocumentChildren(this.fileId).then(res=>{
           this.treechildList=res.data.data;
-           console.log(res);
         })
       },
       ad(){
@@ -433,6 +433,7 @@
         this.addrootdata.parentId=-1;
         this.submitLoading=true;
         addDirectory(this.addrootdata).then(res=>{
+
           if (!res.data.code) {
             this.$message({
               message: '添加文件夹成功',
@@ -444,7 +445,7 @@
             this.formData.name='';
           } else {
             this.$message({
-              message: '添加失败',
+              message: res.data.msg,
               type: 'error'
             });
           }
@@ -469,6 +470,7 @@
         this.formVisiblefileinfo=true;
         this.formTitle='上传文件';
         this.ufile.comment="";
+        this.cnum=0;
       },
    /*   fileinfo(){
         updatefile(this.editfileformData).then(res=>{
@@ -590,7 +592,6 @@
         this.updateData.storageName=this.curstoragename;
       },
       beuploadfile(file){
-        this.checknum=0;
         this.ufile.token=this.$store.getters.token;
         this.ufile.name=file.name;
         this.ufile.customer_id=this.customerid;
@@ -604,25 +605,41 @@
           type: 'success'
         });
         this.$refs.upload.clearFiles();
+
       },
       onError: function () {
         this.$message.error('上传文件失败！');
       },
       checkupload(){
+        if(this.cnum==1) {
           this.$refs.upload.submit();
           this.formVisiblefileinfo = false;
-          this.checknum=this.ufile.document_tree_id;
-
+          this.checknum = this.ufile.document_tree_id;
+        }
+        else if(this.cnum==0){
+          this.$message({
+            message: '文件未选择，上传失败！',
+            type: 'error'
+          });
+          this.formVisiblefileinfo = false;
+          this.checknum = this.ufile.document_tree_id;
+        }
       },
       fileChange(){
-        getDocumentChildren(this.checknum).then(res=>{
+        this.cnum=1;
+        getDocumentChildren(this.ufile.document_tree_id).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
         })
       },
       cancelup(){
         this.formVisiblefileinfo = false;
-         this.$refs.upload.submit();
+        this.$refs.upload.clearFiles();
+        this.$message({
+          message: '取消上传成功！',
+          type: 'error'
+        });
+
       },
 
       fileupdate( node,data){
@@ -687,6 +704,7 @@
         this.addformData.parentId=this.formData.parentid;
         this.submitLoading=true;
         addDirectory(this.addformData).then(res=>{
+          console.log(res);
           if (!res.data.code) {
             this.$message({
               message: '添加文件夹成功',
@@ -698,7 +716,7 @@
             this.formData.name='';
           } else {
             this.$message({
-              message: '添加失败',
+              message: res.data.msg,
               type: 'error'
             });
           }
