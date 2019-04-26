@@ -10,11 +10,22 @@
           <el-form-item class="form-item">
           <el-input v-model="three.name" placeholder="请输入客户名"></el-input>
           </el-form-item>
-          <!--<el-form-item class="form-item">-->
-            <!--<el-input v-model="two.startyear" placeholder="上线年份" style="width: 8vw"></el-input>-->
-            <!--<span>至</span>-->
-            <!--<el-input v-model="two.endyear" placeholder="可不填" style="width: 8vw"></el-input>-->
-          <!--</el-form-item>-->
+          <el-form-item class="form-item">
+            <el-date-picker
+              v-model="three.startYear"
+              type="year"
+              style="width: 10vw"
+              @change="resp"
+              placeholder="上线年份">
+            </el-date-picker>
+            <span>至</span>
+            <el-date-picker
+              v-model="three.endYear"
+              type="year"
+              style="width: 9vw"
+              placeholder="可不填">
+            </el-date-picker>
+          </el-form-item>
           <el-form-item class="form-item">
           <el-button type="primary" @click="findCustomer" icon="el-icon-search">筛选</el-button>
           </el-form-item>
@@ -34,6 +45,14 @@
           </div>
         </div>
       </el-row>
+      <el-col :span="24" class="toolbar">
+        <el-pagination layout="total, sizes, prev, pager, next, jumper"
+                       @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       :page-sizes="pageSizes"
+                       :page-size="pageSize" :total="total" style="float:right;">
+        </el-pagination>
+      </el-col>
     </el-main>
     <!--添加客户-->
     <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false">
@@ -77,8 +96,8 @@
 </template>
 
 <script>
-  import {getAll, add,customerList} from '../api/welcome'
-  import ElMain from "element-ui/packages/main/src/main";
+  import {getAll, add,customerPage} from '../api/welcome'
+  import ElMain from "element-ui/packages/main/src/main"
 
   export default {
     name: "welcome",
@@ -88,10 +107,6 @@
         customerList: [],
         listLoading: false, //是否显示加载动画
         submitLoading: false,
-
-
-
-
 
         formVisible: false, //界面是否显示
         formTitle: '', //界面标题
@@ -124,24 +139,21 @@
         //查找客户
         three:{
           name:'',
-          year:'',
-          duryear:undefined,
+          startYear: '',
+          endYear: '',
         },
-        // two:{
-        //   startyear: '',
-        //   endyear: '',
-        // },
+
+
+        //分页数据
+        total: 0,
+        pageIndex: 1, //页码
+        pageSize: this.CONSTANT.PAGE_SIZE, //分页大小
+        pageSizes: this.CONSTANT.PAGE_SIZES, //分页大小选择列表
       }
     },
     methods: {
       findCustomer(){
-        customerList(this.three).then(res => {
-          this.listLoading = false;
-          this.customerList = res.data.page;
-        }).catch((error) => {
-          this.listLoading = false;
-          if (error) console.log(error);
-        });
+        this.getList();
       },
       changeRules(){
         if(this.isUpLoad===true){
@@ -217,13 +229,33 @@
         });
       },
       getList() {
-        getAll().then(res => {
+        this.listLoading = true;
+        const params = new FormData;
+        params.append('page', this.pageIndex);
+        params.append('limit', this.pageSize);
+        params.append('name',this.three.name);
+        params.append('startYear',this.three.startYear);
+        params.append('endYear',this.three.endYear);
+        customerPage(params).then(res => {
           this.listLoading = false;
-          this.customerList = res.data.data;
+          this.total = res.data.page.totalCount;
+          this.customerList = res.data.page.list;
         }).catch((error) => {
           this.listLoading = false;
           if (error) console.log(error);
         });
+      },
+      //分页函数
+      handleSizeChange(val) { //改变分页大小
+        this.pageSize = val;
+        this.getList();
+      },
+      handleCurrentChange(val) { //页码跳转
+        this.pageIndex = val;
+        this.getList();
+      },
+      resp(){
+        console.log(this.three.startYear);
       }
     },
     mounted() {
@@ -233,7 +265,6 @@
       this.$destroy();
       next();
     },
-
   }
 </script>
 
