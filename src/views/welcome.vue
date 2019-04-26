@@ -201,6 +201,7 @@
                     type: 'error'
                   });
                 }
+                this.$refs['formData'].resetFields();
               }).catch((error) => {
                 this.submitLoading = false;
                 if (error) console.log(error);
