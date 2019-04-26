@@ -26,6 +26,7 @@
           :props="defaultProps"
           empty-text=" "
           style="width: 100%;"
+          v-show="upshow"
         >
           <el-table-column
             prop="name"
@@ -93,7 +94,7 @@
                 plain
                 @click="fileupdate(scope.$index, scope.row)"
                 style="margin-left: -1px">更新</el-button>
-              <el-dropdown  @command="deletedo">
+              <el-dropdown  @command="deletedo" trigger="click">
                 <el-button
                   size="mini"
                   type="info"
@@ -194,7 +195,9 @@
             :dropdownlist="false"
             :before-upload="beuploadfile"
             v-show="upshow"
+            :on-change="fileChange"
             style="float:left;margin-left:1%"
+            :auto-upload="false"
           >
            <el-button  type="primary" plain  :loading="submitLoading">文件上传</el-button>
           </el-upload>
@@ -215,7 +218,7 @@
           style="float:right;margin-left:1%"
         >-->
           <el-button type="primary" size="small"  :loading="submitLoading" @click="checkupload">提交</el-button>
-        <el-button size="small" @click.native="formVisiblefileinfo = false" >取消</el-button>
+        <el-button size="small" @click.native="cancelup" >取消</el-button>
       </div>
     </el-dialog>
     <!--节点添加-->
@@ -256,7 +259,7 @@
 
 
     <!--节点删除-->
-    <el-dialog :title="formTitle" :visible.sync="Visibledel" :close-on-click-modal="false">
+   <!-- <el-dialog :title="formTitle" :visible.sync="Visibledel" :close-on-click-modal="false">
       <p style="color:red;font-size:20px;">该节点下的文件夹</p>
       <el-tree
         :data="deletetreesonList"
@@ -288,7 +291,7 @@
         <el-button @click.native="Visibledel = false">取消</el-button>
         <el-button type="danger" v-on:click="deletesub()" :loading="submitLoading">删除</el-button>
       </div>
-    </el-dialog>
+    </el-dialog>-->
   </section>
 </template>
 
@@ -309,6 +312,7 @@
         updateUrl:'',
         radio:'',
         deletedocumentid:'',
+        utreechildList:[],
         fileList:[],
         treeList:[],
         deletetreechildList:[],
@@ -392,9 +396,13 @@
         submitLoading:false,
         preFileInfo:{},
         name:'',
-        checknum:0,
+        checknum:'',
         userid:'',
         deletevalue:'',
+        wanttodeleteList:[],
+        wanttodeletelength:'',
+        wantdeletenum:'',
+        cnum:0,
       }
     },
 
@@ -405,8 +413,6 @@
         getTreeById(this.customerid).then(res => {
           this.listLoading = false;
           this.treeList=res.data.data;
-          console.log(this.treeList);
-          console.log("123123131");
         }).catch((error) => {
           this.listLoading = false;
           if (error) console.log(error);
@@ -415,38 +421,6 @@
       getfileList(){
         getDocumentChildren(this.fileId).then(res=>{
           this.treechildList=res.data.data;
-          this.typeselect=res.data.data;
-         /* for(let i=0;i<this.typeselect.length;i++)
-          {
-            this.typename=this.typeselect[i].name.split(".");
-            this.typenamelength=this.typename.length;
-            this.filename=this.typename[this.typenamelength-1];
-            if(this.filename==='txt')
-            {
-              this.treechildList[i].filetype='txt';
-            }
-            else if(this.filename==='doc'||this.filename==='docx')
-            {
-              this.treechildList[i].filetype='word';
-            }
-            else if(this.filename==='els'||this.filename==='elsx'||this.filename==='xlsx')
-            {
-              this.treechildList[i].filetype='excel';
-            }
-            else if(this.filename==='pdf')
-            {
-              this.treechildList[i].filetype='pdf';
-            }
-            else if(this.filename==='ppt'||this.filename==='pptx')
-            {
-              this.treechildList[i].filetype='ppt';
-            }
-            else
-            {
-              this.treechildList[i].filetype='null';
-            }
-          }
-*/
         })
       },
       ad(){
@@ -459,6 +433,7 @@
         this.addrootdata.parentId=-1;
         this.submitLoading=true;
         addDirectory(this.addrootdata).then(res=>{
+
           if (!res.data.code) {
             this.$message({
               message: '添加文件夹成功',
@@ -470,7 +445,7 @@
             this.formData.name='';
           } else {
             this.$message({
-              message: '添加失败',
+              message: res.data.msg,
               type: 'error'
             });
           }
@@ -481,7 +456,6 @@
       },
       backfiles(row){
         this.backid=row.id;
-
         getDocumentChildren(this.backid).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
@@ -491,12 +465,12 @@
         });
         this.resourceCheckedKey=this.backid;
         this.getList();
-        console.log(this.resourceCheckedKey);
       },
       addfileinfo(){
         this.formVisiblefileinfo=true;
         this.formTitle='上传文件';
-
+        this.ufile.comment="";
+        this.cnum=0;
       },
    /*   fileinfo(){
         updatefile(this.editfileformData).then(res=>{
@@ -565,7 +539,6 @@
       filemore(node,data){
           this.deletedocumentid=data.id;
           this.preFileInfo=data;
-          console.log(data);
       },
       /*知识点树*/
       renderContent(h, { node, data, store }){
@@ -573,7 +546,7 @@
           <span class="custom-tree-node">
                   <span title={node.label} class="span-ellipsis"> <svg-icon icon-class="p1"/> {node.label}</span>
         <span >
-        <el-dropdown>
+        <el-dropdown trigger="click">
         <el-button class="el-icon-more "  type="text" on-click={ () => this.more(data,node) }></el-button>
         <el-dropdown-menu slot="dropdown" style="margin:-10px;">
           <el-dropdown-item ><el-button  class="el-icon-plus" style="font-size: 12px;" type="text" on-click={ () => this.append(data) }>新建 </el-button>  </el-dropdown-item>
@@ -597,9 +570,14 @@
         getDocumentChildren(this.childid).then(res=>{
           this.treechildList=res.data.data;
           this.typeselect=res.data.data;
-        })
-        getDocumentChildrens(this.childid).then(res=>{
-          this.treesonList=res.data.data;
+          if(this.treechildList==null)
+          {
+            this.wanttodeletelength=0;
+          }
+          else {
+            this.wanttodeletelength=this.treechildList.length;
+          }
+          //this.wanttodeletelength=this.treechildList.length;
         })
       },
       deletehandleNodeClick(data){
@@ -609,46 +587,61 @@
         getDocumentChildren(this.childid).then(res=>{
           this.deletetreechildList=res.data.data;
         })
-      /*  getDocumentChildrens(this.childid).then(res=>{
-          this.deletetreesonList=res.data.data;
-        })*/
       },
       beupdatefile(file){
         this.updateData.storageName=this.curstoragename;
       },
       beuploadfile(file){
-        this.checknum=0;
         this.ufile.token=this.$store.getters.token;
         this.ufile.name=file.name;
         this.ufile.customer_id=this.customerid;
         this.formVisiblefileinfo=true;
       },
+
+
       onSuccess: function (response, file) {
-        //this.formVisiblefileinfo = false;
-        this.checknum=1;
         this.$message({
           message: '上传文件成功！',
           type: 'success'
         });
+        this.$refs.upload.clearFiles();
+
       },
       onError: function () {
         this.$message.error('上传文件失败！');
       },
       checkupload(){
-        if(this.checknum===1)
-        {
+        if(this.cnum==1) {
+          this.$refs.upload.submit();
           this.formVisiblefileinfo = false;
-          getDocumentChildren(this.ufile.document_tree_id).then(res=>{
-            this.treechildList=res.data.data;
-            this.typeselect=res.data.data;
-            console.log(this.treechildList);
-            console.log("wcaonimalgebi");
-          })
+          this.checknum = this.ufile.document_tree_id;
         }
-        else{
-          alert("文件未上传，不能提交");
+        else if(this.cnum==0){
+          this.$message({
+            message: '文件未选择，上传失败！',
+            type: 'error'
+          });
+          this.formVisiblefileinfo = false;
+          this.checknum = this.ufile.document_tree_id;
         }
       },
+      fileChange(){
+        this.cnum=1;
+        getDocumentChildren(this.ufile.document_tree_id).then(res=>{
+          this.treechildList=res.data.data;
+          this.typeselect=res.data.data;
+        })
+      },
+      cancelup(){
+        this.formVisiblefileinfo = false;
+        this.$refs.upload.clearFiles();
+        this.$message({
+          message: '取消上传成功！',
+          type: 'error'
+        });
+
+      },
+
       fileupdate( node,data){
         this.curstoragename=data.storageName;
         this.formVisibleupdatefileinfo=true;
@@ -711,6 +704,7 @@
         this.addformData.parentId=this.formData.parentid;
         this.submitLoading=true;
         addDirectory(this.addformData).then(res=>{
+          console.log(res);
           if (!res.data.code) {
             this.$message({
               message: '添加文件夹成功',
@@ -722,7 +716,7 @@
             this.formData.name='';
           } else {
             this.$message({
-              message: '添加失败',
+              message: res.data.msg,
               type: 'error'
             });
           }
@@ -773,22 +767,78 @@
         this.formTitle="删除文件夹";
         this.deletevalue=data.id;
         this.Visibledel=true;
-        const form1=new FormData();
-        form1.append("directory_id",this.deletevalue);
-        form1.append("customer_id",this.customerid);
-        getRoot(form1).then(res=>{
-          this.deletetreesonList=res.data.data;
-        })
-        getDocumentChildren(this.deletevalue).then(res=>{
-          this.deletetreechildList=res.data.data;
-        })
-       /* const form=new FormData();
-
-        form.append("directory_id",this.deletevalue);
-        getDeleteTreeById(form).then(res=>{
-          console.log(res);
-          this.deletetreesonList=res.data.data;
-        })*/
+        if(data.children==null)
+        {
+          this.wantdeletenum=0;
+        }
+        else{
+          this.wantdeletenum=data.children.length;
+        }
+        if(this.wantdeletenum==0&&this.wanttodeletelength==0)
+        {
+          this.$confirm('确认删除该文件夹吗?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            deleteDirectoryById(this.deletevalue).then(res=> {
+              if(!res.data.code) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+                this.Visibledel=false;
+                this.getList();
+                getDocumentChildren(this.deletevalue).then(res=>{
+                  this.treechildList=res.data.data;
+                })
+              }
+              else {
+                this.$message({
+                  type:'error',
+                  message:'删除失败'
+                });
+              }
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        }
+        else {
+          this.$confirm('该文件夹下的文件夹或文档会被一并删除,请确认是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            deleteDirectoryById(this.deletevalue).then(res => {
+              if (!res.data.code) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+                this.Visibledel = false;
+                this.getList();
+                getDocumentChildren(this.deletevalue).then(res => {
+                  this.treechildList = res.data.data;
+                })
+              }
+              else {
+                this.$message({
+                  type: 'error',
+                  message: '删除失败'
+                });
+              }
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        }
       },
       deletesub(){
         deleteDirectoryById(this.deletevalue).then(res=> {
@@ -799,6 +849,9 @@
             });
             this.Visibledel=false;
             this.getList();
+            getDocumentChildren(this.deletevalue).then(res=>{
+              this.treechildList=res.data.data;
+            })
           }
           else {
             this.$message({
@@ -808,7 +861,7 @@
           }
         });
       },
-      more(){},
+      more(node,data){},
     },
     mounted() {
       this.url='/api/documenttree/uploadDocument';

@@ -29,9 +29,9 @@ export function getAll() {
  * @param data
  */
 
-export function customerList(data) {
+export function customerPage(data) {
   return request({
-    url: '/customer/customerList',
+    url: '/customer/customerPage',
     method: 'post',
     data
   });
