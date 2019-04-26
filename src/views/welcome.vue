@@ -15,7 +15,6 @@
               v-model="three.startYear"
               type="year"
               style="width: 10vw"
-              @change="resp"
               placeholder="上线年份">
             </el-date-picker>
             <span>至</span>
@@ -254,9 +253,6 @@
         this.pageIndex = val;
         this.getList();
       },
-      resp(){
-        console.log(this.three.startYear);
-      }
     },
     mounted() {
       this.getList();
