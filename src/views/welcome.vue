@@ -6,23 +6,24 @@
         <el-form-item class="form-item">
           <el-button type="primary" @click="showAdd" icon="el-icon-plus">新增客户</el-button>
         </el-form-item>
+
         <div style="float: right">
           <el-form-item class="form-item">
-          <el-input v-model="three.name" placeholder="请输入客户名"></el-input>
+          <el-input v-model="three.name" placeholder="请输入客户名" style="width: 14vw"></el-input>
           </el-form-item>
           <el-form-item class="form-item">
             <el-date-picker
               v-model="three.startYear"
               type="year"
-              style="width: 10vw"
-              placeholder="上线年份">
+              style="width: 14vw"
+              placeholder="上限年份/单个年份">
             </el-date-picker>
             <span>至</span>
             <el-date-picker
               v-model="three.endYear"
               type="year"
-              style="width: 9vw"
-              placeholder="可不填">
+              style="width: 10vw"
+              placeholder="下限年份">
             </el-date-picker>
           </el-form-item>
           <el-form-item class="form-item">
@@ -32,7 +33,7 @@
       </el-form>
     </el-col>
     <!--主页面-->
-    <el-main>
+    <el-main style="padding-top: 0px">
       <el-row v-for="(item,index) in customerList" :id="index" :key="item.id" class="rMain">
         <div class="cIndex">
           <p class="pIndex" style="padding-bottom: 1vh">{{index+1}}</p>
@@ -157,6 +158,7 @@
       changeRules(){
         if(this.isUpLoad===true){
           this.formRules.publishDate[0].required=false;
+          this.formData.publishDate='';
         }else{
           this.formRules.publishDate[0].required=true;
         }

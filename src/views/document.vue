@@ -298,6 +298,7 @@
 <script>
   import {getTreeById,getDocumentChildren,getDocumentChildrens,addDirectory,deleteDirectoryById} from '../api/document'
   import { update,download,updatefile,uploadDocument,deleteDocument,getDeleteTreeById,getRoot} from '../api/document'
+  import {preview} from '../api/previewFile'
   import '../store/getters.js'
 
   export default {
@@ -694,7 +695,19 @@
 
         }
         else if(command==='preFile'){
-          this.$router.push({path: '/previewFile', query: {preFileInfo:this.preFileInfo,id:this.customerlist,name:this.name}});
+            let htmlurl;
+          this.$nextTick(() => {
+            this.$message('正在加载，请稍等');
+          });
+            preview(this.preFileInfo.id).then(res=>{
+              if (!res.data.code) {
+                htmlurl=res.data;
+                window.open(htmlurl);
+              }
+            }).catch(error=>{
+              console.log(error);
+            });
+          // this.$router.push({path: '/previewFile', query: {preFileInfo:this.preFileInfo,id:this.customerlist,name:this.name}});
         }
         },
       //增加节点

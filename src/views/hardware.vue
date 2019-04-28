@@ -19,7 +19,7 @@
         <el-table-column header-align="center" align="center" type="index" width="50"></el-table-column>
         <el-table-column header-align="center" align="center" label="硬件类型" min-width="100">
           <template slot-scope="scope">
-            <span>{{scope.row.type|typeChange}}</span>
+            <span>{{typeChange(scope.row.type)}}</span>
           </template>
         </el-table-column>
         <el-table-column header-align="center" align="center" label="厂商" min-width="100"
@@ -71,12 +71,12 @@
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="硬件类型" prop="type">
           <el-select v-model="formData.type" placeholder="请选择硬件类型">
-            <el-option label="服务器" :value="1"></el-option>
-            <el-option label="密码卡" :value="2"></el-option>
-            <el-option label="交换机" :value="3"></el-option>
-            <el-option label="网关" :value="4"></el-option>
-            <el-option label="硬件令牌" :value="5"></el-option>
-            <el-option label="USBKey" :value="6"></el-option>
+            <el-option
+            v-for="item in hardwareMap"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="厂商" prop="company">
@@ -138,6 +138,8 @@
         findStage: '',
         id: '',
         hardwareList: [],
+        hardwareMap:[],
+        hardwareType:{},
         submitLoading: false,
         listLoading: false, //是否显示加载动画
 
@@ -389,10 +391,19 @@
         params.append('limit', this.pageSize);
         params.append('customer_id', this.id);
         params.append('keyword', this.findStage);
+        this.hardwareMap=[];
         hardwarePage(params).then(res => {
           this.listLoading = false;
           this.total = res.data.page.totalCount;
           this.hardwareList = res.data.page.list;
+          this.hardwareType=res.data.page.hardwareMap;
+          for(let i in res.data.page.hardwareMap){
+            let item={
+              value:Number(i),
+              label:res.data.page.hardwareMap[i],
+            }
+            this.hardwareMap.push(item);
+          }
         }).catch((error) => {
           this.listLoading = false;
           if (error) console.log(error);
@@ -413,17 +424,12 @@
       this.formData.customerId = this.id;
       this.getList();
     },
-    filters: {
-      typeChange(type) {
-        const typeMap = {
-          1: '服务器',
-          2: '密码卡',
-          3:'交换机',
-          4:'网关',
-          5:'硬件令牌',
-          6:'USBKey'
+    computed: {
+      typeChange() {
+        return function (type) {
+          const typeMap =this.hardwareType;
+          return typeMap[type];
         }
-        return typeMap[type]
       },
     }
   }
