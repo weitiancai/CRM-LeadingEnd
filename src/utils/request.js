@@ -10,7 +10,7 @@ import { getToken } from '@/utils/auth'
 
 const service = axios.create({
     baseURL: '/api', // api的base_url
-    timeout: 5000 // 请求超时时间
+    timeout: 10000 // 请求超时时间
 });
 
 // request 拦截器

@@ -6,12 +6,25 @@
         <el-form-item class="form-item">
           <el-button type="primary" @click="showAdd" icon="el-icon-plus">新增客户</el-button>
         </el-form-item>
+
         <div style="float: right">
           <el-form-item class="form-item">
-          <el-input v-model="three.name" placeholder="请输入客户名"></el-input>
+          <el-input v-model="three.name" placeholder="请输入客户名" style="width: 14vw"></el-input>
           </el-form-item>
           <el-form-item class="form-item">
-            <el-input v-model="three.year" placeholder="上线年份" style="width: 8vw"></el-input>
+            <el-date-picker
+              v-model="three.startYear"
+              type="year"
+              style="width: 14vw"
+              placeholder="上限年份/单个年份">
+            </el-date-picker>
+            <span>至</span>
+            <el-date-picker
+              v-model="three.endYear"
+              type="year"
+              style="width: 10vw"
+              placeholder="下限年份">
+            </el-date-picker>
           </el-form-item>
           <el-form-item class="form-item">
           <el-button type="primary" @click="findCustomer" icon="el-icon-search">筛选</el-button>
@@ -20,7 +33,7 @@
       </el-form>
     </el-col>
     <!--主页面-->
-    <el-main>
+    <el-main style="padding-top: 0px">
       <el-row v-for="(item,index) in customerList" :id="index" :key="item.id" class="rMain">
         <div class="cIndex">
           <p class="pIndex" style="padding-bottom: 1vh">{{index+1}}</p>
@@ -32,7 +45,14 @@
           </div>
         </div>
       </el-row>
-
+      <el-col :span="24" class="toolbar">
+        <el-pagination layout="total, sizes, prev, pager, next, jumper"
+                       @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       :page-sizes="pageSizes"
+                       :page-size="pageSize" :total="total" style="float:right;">
+        </el-pagination>
+      </el-col>
     </el-main>
     <!--添加客户-->
     <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false">
@@ -50,7 +70,7 @@
             placeholder="选择日期"
             format="yyyy 年 MM 月 dd 日"
             value-format="yyyy-MM-dd"
-             @change="changeIsUpLoad">
+            @change="changeIsUpLoad">
           </el-date-picker>
           <el-checkbox v-model="isUpLoad" @change="changeRules">未上线</el-checkbox>
         </el-form-item>
@@ -77,8 +97,8 @@
 </template>
 
 <script>
-  import {getAll, add,customerList} from '../api/welcome'
-  import ElMain from "element-ui/packages/main/src/main";
+  import {getAll, add,customerPage} from '../api/welcome'
+  import ElMain from "element-ui/packages/main/src/main"
 
   export default {
     name: "welcome",
@@ -120,9 +140,16 @@
         //查找客户
         three:{
           name:'',
-          year:'',
-          monthAndDay:'',
+          startYear: '',
+          endYear: '',
         },
+
+
+        //分页数据
+        total: 0,
+        pageIndex: 1, //页码
+        pageSize: this.CONSTANT.PAGE_SIZE, //分页大小
+        pageSizes: this.CONSTANT.PAGE_SIZES, //分页大小选择列表
       }
     },
     methods: {
@@ -131,13 +158,7 @@
         this.isUpLoad=false;
       },
       findCustomer(){
-        customerList(this.three).then(res => {
-          this.listLoading = false;
-          this.customerList = res.data.page;
-        }).catch((error) => {
-          this.listLoading = false;
-          if (error) console.log(error);
-        });
+        this.getList();
       },
       changeRules(){
         if(this.isUpLoad===true){
@@ -187,7 +208,7 @@
                 this.submitLoading = false;
                 if (res.data.code == 0) {
                   this.formVisible = false;
-                  this.getList(); //重新加载数据
+                  this.getList();   //重新加载数据
                   this.$message({
                     message: '添加成功！',
                     type: 'success'
@@ -214,14 +235,31 @@
         });
       },
       getList() {
-        getAll().then(res => {
+        this.listLoading = true;
+        const params = new FormData;
+        params.append('page', this.pageIndex);
+        params.append('limit', this.pageSize);
+        params.append('name',this.three.name);
+        params.append('startYear',this.three.startYear);
+        params.append('endYear',this.three.endYear);
+        customerPage(params).then(res => {
           this.listLoading = false;
-          this.customerList = res.data.data;
+          this.total = res.data.page.totalCount;
+          this.customerList = res.data.page.list;
         }).catch((error) => {
           this.listLoading = false;
           if (error) console.log(error);
         });
-      }
+      },
+      //分页函数
+      handleSizeChange(val) { //改变分页大小
+        this.pageSize = val;
+        this.getList();
+      },
+      handleCurrentChange(val) { //页码跳转
+        this.pageIndex = val;
+        this.getList();
+      },
     },
     mounted() {
       this.getList();
@@ -276,4 +314,6 @@
   p {
     font-size: large;
   }
+
+
 </style>
