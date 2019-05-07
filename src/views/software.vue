@@ -19,7 +19,7 @@
         <el-table-column header-align="center" align="center" type="index" width="50"></el-table-column>
         <el-table-column header-align="center" align="center" label="软件类型" min-width="100">
           <template slot-scope="scope">
-            <span>{{scope.row.type|typeChange}}</span>
+            <span>{{typeChange(scope.row.type)}}</span>
           </template>
         </el-table-column>
         <el-table-column header-align="center" align="center" label="厂商" min-width="100"
@@ -80,10 +80,12 @@
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="软件类型" prop="type">
           <el-select v-model="formData.type" placeholder="请选择软件类型">
-            <el-option label="操作系统" :value="1"></el-option>
-            <el-option label="数据库" :value="2"></el-option>
-            <el-option label="web服务器" :value="3"></el-option>
-            <el-option label="其他" :value="0"></el-option>
+            <el-option
+              v-for="item in softwareMap"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="厂商" prop="company">
@@ -100,8 +102,8 @@
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-select v-model="formData.status" placeholder="请选择状态">
-            <el-option label="有效" :value=1></el-option>
-            <el-option label="无效" :value=0></el-option>
+            <el-option label="有效" :value="1"></el-option>
+            <el-option label="无效" :value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="部署日期" prop="deployDate">
@@ -137,7 +139,7 @@
         <el-table-column header-align="center" align="center" type="index" width="50"></el-table-column>
         <el-table-column header-align="center" align="center" label="硬件类型" min-width="100">
           <template slot-scope="scope">
-            <span>{{scope.row.type|typeChange2}}</span>
+            <span>{{typeChange2(scope.row.type)}}</span>
           </template>
         </el-table-column>
         <el-table-column header-align="center" align="center" label="厂商" min-width="100"
@@ -169,8 +171,12 @@
       <el-form :model="formDataHardWare" label-width="80px" ref="formDataHardWare">
         <el-form-item label="硬件类型" prop="type">
           <el-select v-model="formDataHardWare.type" :disabled="true">
-            <el-option label="服务器" :value=1></el-option>
-            <el-option label="密码卡" :value=2></el-option>
+            <el-option
+              v-for="item in hardwareMap"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="厂商" prop="company">
@@ -225,6 +231,10 @@
         id: '',
         softwareList: [],
         hardwareList: [],
+        hardwareMap:[],
+        hardwareType:{},
+        softwareMap:[],
+        softwareType:{},
         submitLoading: false,
         listLoading: false, //是否显示加载动画
 
@@ -438,7 +448,7 @@
         this.formTitle = '编辑软件';
         this.action = 'modify';
         this.formData = {
-          type: item.type,
+          type: Number(item.type),
           company: item.company,
           name: item.name,
           version: item.version,
@@ -451,6 +461,8 @@
           hardwareId: item.hardwareId,
         },
           this.softwareId = item.id;
+        console.log(this.formData);
+        console.log(this.softwareMap);
       },
       changeStatus(item) {
         this.$confirm('是否修改该软件状态？', '提示', {
@@ -513,10 +525,28 @@
         params.append('limit', this.pageSize);
         params.append('customer_id', this.id);
         params.append('keyword', this.findStage);
+        this.hardwareMap=[];
+        this.softwareMap=[];
         softwarePage(params).then(res => {
           this.listLoading = false;
           this.total = res.data.page.totalCount;
           this.softwareList = res.data.page.list;
+          this.hardwareType=res.data.page.hardwareMap;
+          for(let i in res.data.page.hardwareMap){
+            let item={
+              value:Number(i),
+              label:res.data.page.hardwareMap[i],
+            }
+            this.hardwareMap.push(item);
+          }
+          this.softwareType=res.data.page.softwareMap;
+          for(let i in res.data.page.softwareMap){
+            let item={
+              value:Number(i),
+              label:res.data.page.softwareMap[i],
+            }
+            this.softwareMap.push(item);
+          }
         }).catch((error) => {
           this.listLoading = false;
           if (error) console.log(error);
@@ -546,26 +576,18 @@
       this.formData.customerId = this.id;
       this.getList();
     },
-    filters: {
-      typeChange(type) {
-        const typeMap = {
-          1: '操作系统',
-          2: '数据库',
-          3: 'web服务器',
-          0: '其他',
+    computed: {
+      typeChange() {
+        return function (type) {
+          const typeMap =this.softwareType;
+          return typeMap[type];
         }
-        return typeMap[type]
       },
-      typeChange2(type) {
-        const typeMap = {
-          1: '服务器',
-          2: '密码卡',
-          3:'交换机',
-          4:'网关',
-          5:'硬件令牌',
-          6:'USBKey'
+      typeChange2() {
+        return function (type) {
+          const typeMap =this.hardwareType;
+          return typeMap[type];
         }
-        return typeMap[type]
       },
     }
   }

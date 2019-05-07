@@ -3,7 +3,7 @@
   <section>
 
     <el-row>
-      <el-col :span="4" style="margin-top:1%;margin-left:2%;" :offset="1">
+      <el-col :span="5" style="margin-top:1%;margin-left:2%;" :offset="1">
         <el-button size="small" type="primary" plain @click="ad">新增根文件夹</el-button>
         <el-tree
           :data="treeList"
@@ -16,9 +16,11 @@
           :highlight-current="true"
           empty-text="无文件夹"
         >
+
         </el-tree>
+
       </el-col>
-      <el-col :span="19"><div class=" bg-purple1" >
+      <el-col :span="18"><div class=" bg-purple1" >
         <el-button size="small" type="primary" @click="addfileinfo" v-show="upshow" >点击上传</el-button>
         <p></p>
         <el-table
@@ -298,6 +300,7 @@
 <script>
   import {getTreeById,getDocumentChildren,getDocumentChildrens,addDirectory,deleteDirectoryById} from '../api/document'
   import { update,download,updatefile,uploadDocument,deleteDocument,getDeleteTreeById,getRoot} from '../api/document'
+  import {preview} from '../api/previewFile'
   import '../store/getters.js'
 
   export default {
@@ -554,7 +557,7 @@
         <el-dropdown-item ><el-button class="el-icon-delete" style="font-size: 12px;color:#A52A2A" type="text" on-click={ () => this.remove(node,data) }>删除</el-button></el-dropdown-item>
         </el-dropdown-menu>
         </el-dropdown>
-        </span>
+         </span>
         </span>);
       },
       renderContent1(h, { node, data, store }){
@@ -618,10 +621,10 @@
         }
         else if(this.cnum==0){
           this.$message({
-            message: '文件未选择，上传失败！',
+            message: '请上传文件',
             type: 'error'
           });
-          this.formVisiblefileinfo = false;
+         // this.formVisiblefileinfo = false;
           this.checknum = this.ufile.document_tree_id;
         }
       },
@@ -694,7 +697,19 @@
 
         }
         else if(command==='preFile'){
-          this.$router.push({path: '/previewFile', query: {preFileInfo:this.preFileInfo,id:this.customerlist,name:this.name}});
+            let htmlurl;
+          this.$nextTick(() => {
+            this.$message('正在加载，请稍等');
+          });
+            preview(this.preFileInfo.id).then(res=>{
+              if (!res.data.code) {
+                htmlurl=res.data;
+                window.open(htmlurl);
+              }
+            }).catch(error=>{
+              console.log(error);
+            });
+          // this.$router.push({path: '/previewFile', query: {preFileInfo:this.preFileInfo,id:this.customerlist,name:this.name}});
         }
         },
       //增加节点
@@ -889,7 +904,6 @@
     justify-content: space-between;
     font-size: 14px;
     padding-right: 8px;
-
   }
   .el-dropdown-link {
     cursor: pointer;

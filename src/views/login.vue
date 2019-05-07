@@ -54,15 +54,11 @@
         },
         handleLogin() {
           this.$refs.formData.validate(valid => {
-            console.log(valid);
-            console.log("122121");
             if (valid) {
               this.loginLoading = true;
               this.$store.dispatch('Login', this.formData).then(response => {
                 this.loginLoading = false;
                 this.$router.push({path: '/home'});
-                console.log(response);
-                console.log('11111');
               }).catch(() => {
                 this.loginLoading = false
               })
