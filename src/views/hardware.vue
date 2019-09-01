@@ -55,11 +55,8 @@
         </el-table-column>
       </el-table>
 
-<<<<<<< HEAD
       <!--工具条-->
-=======
       <!--工具条:分页-->
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       <el-col :span="24" class="toolbar">
         <el-pagination layout="total, sizes, prev, pager, next, jumper"
                        @size-change="handleSizeChange"
@@ -71,11 +68,7 @@
     </el-main>
 
     <!--添加硬件-->
-<<<<<<< HEAD
-    <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false">
-=======
     <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false"  style="margin-top: -8vh">
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="硬件类型" prop="type">
           <el-select v-model="formData.type" placeholder="请选择硬件类型">
@@ -129,7 +122,6 @@
         <el-button type="primary" @click.native="saveSubmit('formData')" :loading="submitLoading">提交</el-button>
       </div>
     </el-dialog>
-
   </section>
 </template>
 
@@ -150,11 +142,7 @@
         hardwareType:{},
         submitLoading: false,
         listLoading: false, //是否显示加载动画
-
-<<<<<<< HEAD
-=======
         //分页数据
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
         total: 0,
         pageIndex: 1, //页码
         pageSize: this.CONSTANT.PAGE_SIZE, //分页大小
@@ -420,11 +408,8 @@
           if (error) console.log(error);
         });
       },
-<<<<<<< HEAD
       //分页
-=======
       //分页函数
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       handleSizeChange(val) { //改变分页大小
         this.pageSize = val;
         this.getList();

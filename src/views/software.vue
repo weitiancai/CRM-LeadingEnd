@@ -72,11 +72,7 @@
     </el-main>
 
     <!--添加软件-->
-<<<<<<< HEAD
-    <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false">
-=======
     <el-dialog :title="formTitle" :visible.sync="formVisible" :close-on-click-modal="false"  style="margin-top: -8vh">
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       <el-form :model="formData" label-width="80px" :rules="formRules" ref="formData">
         <el-form-item label="软件类型" prop="type">
           <el-select v-model="formData.type" placeholder="请选择软件类型">
@@ -163,11 +159,7 @@
     </el-dialog>
 
     <!--硬件详情-->
-<<<<<<< HEAD
-    <el-dialog :title="formTitleShowHardware" :visible.sync="formVisibleShowHardware" :close-on-click-modal="false">
-=======
     <el-dialog :title="formTitleShowHardware" :visible.sync="formVisibleShowHardware" :close-on-click-modal="false"  style="margin-top: -8vh">
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       <el-form :model="formDataHardWare" label-width="80px" ref="formDataHardWare">
         <el-form-item label="硬件类型" prop="type">
           <el-select v-model="formDataHardWare.type" :disabled="true">

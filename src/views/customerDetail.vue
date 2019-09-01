@@ -9,11 +9,8 @@
     <el-main class="tabZujian">
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="详细信息" name="first" :key="'first'">
-<<<<<<< HEAD
           <child1 v-if="isChildUpdate1"></child1>
-=======
           <child1 v-on:passName="getChildName" v-if="isChildUpdate1"></child1>
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
         </el-tab-pane>
 
         <el-tab-pane label="硬件" name="second" :key="'second'">
@@ -62,12 +59,9 @@
       this.name = this.$route.query.name;
     },
     methods: {
-<<<<<<< HEAD
-=======
       getChildName:function (name) {
         this.name=name;
       },
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       handleClick(tab) {
         if (tab.name == "first") {
           this.isChildUpdate1 = true;

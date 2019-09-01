@@ -46,10 +46,7 @@
             value-format="yyyy-MM-dd"
             @change="changeIsUpLoad">
           </el-date-picker>
-<<<<<<< HEAD
-=======
           <el-checkbox v-model="isUpLoad" @change="changeRules">未上线</el-checkbox>
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
         </el-form-item>
         <el-form-item label="地址" prop="address">
           <el-input v-model="formData.address"></el-input>
@@ -102,11 +99,6 @@
         submitLoading: false,
         listLoading: false, //是否显示加载动画
         id: '',
-<<<<<<< HEAD
-      }
-    },
-    methods: {
-=======
         isUpLoad:false,
       }
     },
@@ -123,7 +115,6 @@
           this.formRules.publishDate[0].required=true;
         }
       },
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       unSumbit(){
         this.formVisible=false;
         this.$refs['formData'].resetFields();
@@ -142,10 +133,7 @@
         this.formVisible=true;
         this.formTitle="修改客户信息";
         this.formData={
-<<<<<<< HEAD
-=======
           id:this.id,
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
           name:this.customerInfo.name,
           function:this.customerInfo.function,
           publishDate:this.customerInfo.publishDate,
@@ -153,16 +141,12 @@
           longitudeLatitude:this.customerInfo.longitudeLatitude,
           website:this.customerInfo.website,
           comment:this.customerInfo.comment,
-<<<<<<< HEAD
-        }
-=======
         };
         if(this.formData.publishDate==="未上线"){
           this.isUpLoad=true;
           this.formData.publishDate='';
         }
         this.changeRules();
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
       },
       saveIt(formData) {
         this.$refs[formData].validate((valid) => {
@@ -185,10 +169,7 @@
                 }
                 this.formVisible=false;
                 this.submitLoading=false;
-<<<<<<< HEAD
-=======
                 this.$emit("passName",this.formData.name)
->>>>>>> 062e872014baad1088c6de7f28c747979cee1545
                 this.$refs['formData'].resetFields();
                 this.getInfo();
               }).catch((error) => {
